@@ -47,16 +47,27 @@ export default function CustomCursor() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="w-32 h-32 rounded-full bg-brand/90 backdrop-blur-sm flex items-center justify-center"
+          className="w-32 h-32 rounded-full bg-[#121212]/90 backdrop-blur-sm flex items-center justify-center border border-white/20"
         >
-          <span className="text-xs font-sans uppercase tracking-widest text-white">
+          <span className="text-xs font-sans uppercase tracking-[0.3em] text-white font-medium">
             Ver Obra
           </span>
         </motion.div>
       ) : (
         <svg width="32" height="32" viewBox="0 0 32 32">
-          <circle cx="16" cy="16" r="6" fill="#60A3D1" />
-          <circle cx="16" cy="16" r="12" stroke="#60A3D1" strokeWidth="1" fill="none" />
+          {/* Inner solid dot - much darker now */}
+          <circle cx="16" cy="16" r="4.5" fill="#121212" />
+          {/* Outer ring - darker and slightly thicker */}
+          <circle 
+            cx="16" 
+            cy="16" 
+            r="12" 
+            stroke="#121212" 
+            strokeWidth="1.5" 
+            strokeDasharray="2 4"
+            fill="none" 
+            opacity="0.6"
+          />
         </svg>
       )}
     </motion.div>
