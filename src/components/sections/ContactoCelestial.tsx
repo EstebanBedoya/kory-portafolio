@@ -4,7 +4,7 @@ import ScrollReveal from "@/components/ui/ScrollReveal";
 
 export default function ContactoCelestial() {
   return (
-    <section id="contact" className="py-32 px-6 md:px-12 lg:px-24 bg-bg-primary">
+    <section id="contact" className="py-32 px-6 md:px-12 lg:px-24">
       <div className="max-w-2xl mx-auto text-center">
         <ScrollReveal>
           <div className="mb-12">
@@ -18,7 +18,7 @@ export default function ContactoCelestial() {
         <div className="space-y-12">
           <ScrollReveal delay={0.1}>
             <a href="mailto:estefabegi@gmail.com" className="block group">
-              <span className="text-xs uppercase tracking-[0.3em] text-neutral-dark/50 block mb-3">
+              <span className="text-xs uppercase tracking-[0.3em] text-neutral-dark/70 block mb-3">
                 Email
               </span>
               <span className="font-serif text-3xl md:text-4xl text-neutral-dark group-hover:text-brand transition-colors duration-300">
@@ -29,16 +29,16 @@ export default function ContactoCelestial() {
 
           <ScrollReveal delay={0.2}>
             <a
-              href="https://instagram.com/_artkory"
+              href="https://www.instagram.com/its_koryn"
               target="_blank"
               rel="noopener noreferrer"
               className="block group"
             >
-              <span className="text-xs uppercase tracking-[0.3em] text-neutral-dark/50 block mb-3">
+              <span className="text-xs uppercase tracking-[0.3em] text-neutral-dark/70 block mb-3">
                 Instagram
               </span>
               <span className="font-serif text-3xl md:text-4xl text-neutral-dark group-hover:text-brand transition-colors duration-300">
-                @_artkory
+                @its_koryn
               </span>
             </a>
           </ScrollReveal>
@@ -46,7 +46,7 @@ export default function ContactoCelestial() {
 
         <ScrollReveal delay={0.4}>
           <div className="mt-24 pt-12 border-t border-neutral-dark/10">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-dark/30">
+            <p className="text-xs uppercase tracking-[0.2em] text-neutral-dark/50">
               Estefanía Bedoya Giraldo © 2026
             </p>
           </div>

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Outfit } from "next/font/google";
-import "./globals-v2.css";
+import "./globals.css";
 import CustomCursor from "@/components/ui/CustomCursor";
-import NavBar from "@/components/sections-v2/NavBar";
+import NavBar from "@/components/sections/NavBar";
+import ParticlesBackground from "@/components/ui/ParticlesBackground";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-serif",
@@ -19,19 +20,23 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Estefanía Bedoya Giraldo | Kory - Versión Celestial",
+  title: "KORY",
   description: "Portafolio artístico celestial. El arte de recordar donde la memoria se vuelve materia.",
+  icons: {
+    icon: "/logo-silueta.png",
+  },
 };
 
-export default function V2Layout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="es" className={`${cormorant.variable} ${outfit.variable}`}>
-      <body className="v2">
+      <body>
         <div className="noise-overlay" />
+        <ParticlesBackground />
         <CustomCursor />
         <NavBar />
         {children}

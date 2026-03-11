@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useCallback } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { obras, Obra } from "@/data/obras";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import Lightbox from "@/components/ui/Lightbox";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,8 +30,24 @@ const itemVariants = {
 };
 
 export default function GalleryFloating() {
+  const [selectedObra, setSelectedObra] = useState<Obra | null>(null);
+
+  const handleNext = useCallback(() => {
+    if (!selectedObra) return;
+    const currentIndex = obras.findIndex((o) => o.id === selectedObra.id);
+    const nextIndex = (currentIndex + 1) % obras.length;
+    setSelectedObra(obras[nextIndex]);
+  }, [selectedObra]);
+
+  const handlePrev = useCallback(() => {
+    if (!selectedObra) return;
+    const currentIndex = obras.findIndex((o) => o.id === selectedObra.id);
+    const prevIndex = (currentIndex - 1 + obras.length) % obras.length;
+    setSelectedObra(obras[prevIndex]);
+  }, [selectedObra]);
+
   return (
-    <section id="gallery" className="py-32 px-6 md:px-12 lg:px-24 bg-bg-primary">
+    <section id="gallery" className="py-32 px-6 md:px-12 lg:px-24">
       <ScrollReveal>
         <div className="mb-20 text-center md:text-left">
           <span className="text-xs uppercase tracking-[0.4em] text-accent font-medium">
@@ -51,14 +68,25 @@ export default function GalleryFloating() {
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
       >
         {obras.map((obra) => (
-          <GalleryItem key={obra.id} obra={obra} />
+          <GalleryItem 
+            key={obra.id} 
+            obra={obra} 
+            onSelect={() => setSelectedObra(obra)}
+          />
         ))}
       </motion.div>
+
+      <Lightbox 
+        obra={selectedObra}
+        onClose={() => setSelectedObra(null)}
+        onNext={handleNext}
+        onPrev={handlePrev}
+      />
     </section>
   );
 }
 
-function GalleryItem({ obra }: { obra: Obra }) {
+function GalleryItem({ obra, onSelect }: { obra: Obra; onSelect: () => void }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -71,8 +99,13 @@ function GalleryItem({ obra }: { obra: Obra }) {
         setIsHovered(false);
         setIsExpanded(false);
       }}
+      onClick={(e) => {
+        // Only trigger onSelect if not clicking the specific detail elements if necessary, 
+        // but here it's fine for the whole card to be clickable
+        onSelect();
+      }}
     >
-      <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-700 group-hover:shadow-2xl group-hover:shadow-brand/20 group-hover:-translate-y-2 border border-white/20">
+      <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-700 group-hover:shadow-2xl group-hover:shadow-brand/20 group-hover:-translate-y-2 border border-white/20 cursor-none">
         <motion.div
           animate={{ scale: isHovered ? 1.05 : 1 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
@@ -89,7 +122,7 @@ function GalleryItem({ obra }: { obra: Obra }) {
         </motion.div>
 
         {/* Expansible Info Trigger */}
-        <div className="absolute inset-0 flex items-center justify-center p-6 bg-transparent overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center p-6 bg-transparent overflow-hidden pointer-events-none md:pointer-events-auto">
           <motion.div
             layout
             onMouseEnter={() => setIsExpanded(true)}
@@ -105,7 +138,7 @@ function GalleryItem({ obra }: { obra: Obra }) {
               relative z-20 flex flex-col items-center justify-center
               ${isExpanded 
                 ? "w-full h-full bg-brand/90 backdrop-blur-md p-8" 
-                : "w-28 h-28 bg-brand/80 backdrop-blur-sm cursor-pointer"
+                : "w-28 h-28 bg-brand/80 backdrop-blur-sm"
               }
               shadow-lg text-white text-center
               ${isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90 translate-y-4"}
@@ -142,16 +175,16 @@ function GalleryItem({ obra }: { obra: Obra }) {
                   </div>
                 </div>
 
-                <button className="mt-4 px-6 py-2 border border-white/30 rounded-full text-[10px] uppercase tracking-widest hover:bg-white hover:text-brand transition-colors duration-300">
-                  Explorar Detalles
-                </button>
+                <div className="mt-4 px-6 py-2 border border-white/30 rounded-full text-[10px] uppercase tracking-widest bg-white text-brand">
+                  Ver Detalles
+                </div>
               </motion.div>
             )}
           </motion.div>
         </div>
       </div>
 
-      {/* Static Label (Visible always or just on group hover) */}
+      {/* Static Label */}
       <div className="mt-6 flex justify-between items-baseline px-2">
         <span className="font-serif text-xl text-neutral-dark italic">
           {obra.titulo}
