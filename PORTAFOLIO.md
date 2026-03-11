@@ -7,7 +7,7 @@
 **Ubicación:** Medellín, Colombia  
 **Nacimiento:** 2003  
 **Email:** estefabegi@gmail.com  
-**Instagram:** @_artkory · @helloo_estefa  
+**Instagram:** @its_koryn · @helloo_estefa  
 **Fecha creación PDF:** Wed Mar 4 15:20:21 2026 -05  
 **Software:** Adobe Illustrator 30.1 (Macintosh)  
 **Páginas:** 6  

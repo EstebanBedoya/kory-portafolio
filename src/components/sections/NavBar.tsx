@@ -12,7 +12,7 @@ export default function NavBar() {
       transition={{ duration: 0.8, ease: [0.77, 0, 0.175, 1] }}
       className="fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-12 flex justify-between items-center"
     >
-      <Link href="/v2" className="mix-blend-multiply">
+      <Link href="/" className="mix-blend-multiply">
         <Image
           src="/logo-name.png"
           alt="Kory"
@@ -22,21 +22,21 @@ export default function NavBar() {
         />
       </Link>
 
-      <div className="flex gap-8 text-xs uppercase tracking-[0.2em] text-neutral-dark/80">
+      <div className="flex gap-8 text-xs uppercase tracking-[0.2em] text-neutral-dark">
         <Link 
-          href="/v2#about" 
+          href="#about" 
           className="hover:text-brand transition-colors duration-300"
         >
           Acerca
         </Link>
         <Link 
-          href="/v2#gallery" 
+          href="#gallery" 
           className="hover:text-brand transition-colors duration-300"
         >
           Galería
         </Link>
         <Link 
-          href="/v2#contact" 
+          href="#contact" 
           className="hover:text-brand transition-colors duration-300"
         >
           Contacto

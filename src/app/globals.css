@@ -5,12 +5,12 @@
 :root {
   --bg-primary: #93CAED;
   --bg-secondary: #7BBCE0;
-  --brand: #60A3D1;
-  --accent: #4A86B4;
-  --neutral-dark: #2D2D2D;
-  --text-primary: #2D2D2D;
-  --text-secondary: #4A4A4A;
-  --text-light: #F5F5F5;
+  --brand: #2D5A82; /* Darker blue for visibility */
+  --accent: #1C3F5E; /* Deeper blue for accents */
+  --neutral-dark: #121212; /* Solid near-black for maximum contrast */
+  --text-primary: #121212;
+  --text-secondary: #2D2D2D;
+  --text-light: #FBFBFB;
 }
 
 * {
@@ -21,7 +21,7 @@ html {
   scroll-behavior: smooth;
 }
 
-body.v2 {
+body {
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: 'Outfit', system-ui, sans-serif;
@@ -31,26 +31,26 @@ body.v2 {
   overflow-x: hidden;
 }
 
-body.v2 ::selection {
+body ::selection {
   background: rgba(96, 163, 209, 0.3);
   color: var(--neutral-dark);
 }
 
-body.v2 a, 
-body.v2 button {
+body a, 
+body button {
   cursor: none;
 }
 
-body.v2 img {
+body img {
   display: block;
   max-width: 100%;
 }
 
-body.v2 .font-serif {
+body .font-serif {
   font-family: 'Cormorant Garamond', Georgia, serif;
 }
 
-body.v2 .font-sans {
+body .font-sans {
   font-family: 'Outfit', system-ui, sans-serif;
 }
 

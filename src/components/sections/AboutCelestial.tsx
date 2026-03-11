@@ -10,7 +10,7 @@ Busco generar contemplación: que el espectador no solo observe la obra, sino qu
 
 export default function AboutCelestial() {
   return (
-    <section id="about" className="py-32 px-6 md:px-12 lg:px-24 bg-bg-primary">
+    <section id="about" className="py-32 px-6 md:px-12 lg:px-24">
       <div className="max-w-4xl mx-auto">
         <ScrollReveal>
           <div className="mb-16">
@@ -24,7 +24,7 @@ export default function AboutCelestial() {
         <div className="space-y-12">
           {declaracion.split("\n\n").map((parrafo, index) => (
             <ScrollReveal key={index} delay={index * 0.15}>
-              <p className="font-sans text-lg md:text-xl leading-relaxed text-neutral-dark/80">
+              <p className="font-sans text-lg md:text-xl leading-relaxed text-neutral-dark">
                 {parrafo}
               </p>
             </ScrollReveal>

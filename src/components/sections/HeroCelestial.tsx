@@ -18,7 +18,7 @@ export default function HeroCelestial() {
   return (
     <section
       ref={containerRef}
-      className="min-h-screen relative flex items-center justify-center overflow-hidden bg-bg-primary"
+      className="min-h-screen relative flex items-center justify-center overflow-hidden"
     >
       <motion.div
         style={{ y, scale, opacity }}
@@ -48,7 +48,7 @@ export default function HeroCelestial() {
           El arte de{" "}
           <span className="italic text-brand">recordar</span>
         </h1>
-        <p className="mt-6 font-sans text-sm md:text-base text-neutral-dark/70 tracking-[0.3em] uppercase">
+        <p className="mt-6 font-sans text-sm md:text-base text-neutral-dark tracking-[0.3em] uppercase">
           Donde la memoria se vuelve materia
         </p>
       </motion.div>
@@ -60,13 +60,13 @@ export default function HeroCelestial() {
         className="absolute bottom-12 left-1/2 -translate-x-1/2"
       >
         <div className="flex flex-col items-center gap-3">
-          <span className="text-[10px] uppercase tracking-[0.4em] text-neutral-dark/50">
+          <span className="text-[10px] uppercase tracking-[0.4em] text-neutral-dark/70">
             Estefanía Bedoya Giraldo
           </span>
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-px h-12 bg-brand/30"
+            className="w-px h-12 bg-brand/50"
           />
         </div>
       </motion.div>
