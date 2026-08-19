@@ -76,8 +76,21 @@ export default function GalleryFloating() {
         ))}
       </motion.div>
 
-      <Lightbox 
-        obra={selectedObra}
+      <Lightbox
+        item={
+          selectedObra
+            ? {
+                src: selectedObra.imagen,
+                alt: selectedObra.titulo,
+                titulo: selectedObra.titulo,
+                meta: [
+                  { label: "Año de creación", value: String(selectedObra.anio) },
+                  { label: "Técnica empleada", value: selectedObra.tecnica },
+                  { label: "Dimensiones", value: selectedObra.tamano },
+                ],
+              }
+            : null
+        }
         onClose={() => setSelectedObra(null)}
         onNext={handleNext}
         onPrev={handlePrev}
@@ -99,11 +112,7 @@ function GalleryItem({ obra, onSelect }: { obra: Obra; onSelect: () => void }) {
         setIsHovered(false);
         setIsExpanded(false);
       }}
-      onClick={(e) => {
-        // Only trigger onSelect if not clicking the specific detail elements if necessary, 
-        // but here it's fine for the whole card to be clickable
-        onSelect();
-      }}
+      onClick={onSelect}
     >
       <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-700 group-hover:shadow-2xl group-hover:shadow-brand/20 group-hover:-translate-y-2 border border-white/20 cursor-none">
         <motion.div
