@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { proyectos } from "@/data/proyectos";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,6 +21,10 @@ export default function NavBar() {
   const navLinks = [
     { name: "Acerca", href: "#about" },
     { name: "Galería", href: "#gallery" },
+    ...proyectos.map((proyecto) => ({
+      name: proyecto.titulo,
+      href: `#${proyecto.id}`,
+    })),
     { name: "Contacto", href: "#contact" },
   ];
 
