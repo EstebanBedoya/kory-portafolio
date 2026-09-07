@@ -44,3 +44,12 @@ next-env.d.ts
 *.ai
 *.tmp
 *.pdf
+*.tif
+*.tiff
+
+# agent tooling state (local caches, vendored skills, generation artifacts)
+.atl/
+.claude/
+.impeccable/
+.img2threejs/
+object-sculpt-spec.json
