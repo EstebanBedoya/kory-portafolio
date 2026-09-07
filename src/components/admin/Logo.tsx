@@ -10,6 +10,8 @@
  */
 export function Logo() {
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- see above: the
+    // optimiser is not worth coupling the admin to the site's rendering.
     <img
       src="/logo-name.png"
       alt="Kory"
