@@ -61,6 +61,11 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
   db: postgresAdapter({
+    // Schema changes go through versioned migrations in every environment.
+    // Leaving push on for development invites drift: the local schema ends up
+    // shaped by whatever the config happened to be, and the migration that
+    // production runs is never exercised until it runs there.
+    push: false,
     pool: {
       connectionString: requireEnv("DATABASE_URI"),
       ssl: databaseSSL(),
