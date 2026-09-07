@@ -53,6 +53,18 @@ export default buildConfig({
     meta: {
       titleSuffix: " · Kory",
     },
+    // Component paths resolve from here.
+    importMap: {
+      baseDir: dirname,
+    },
+    components: {
+      // The artist signs in to manage her own work; the panel should carry
+      // her name rather than the CMS vendor's.
+      graphics: {
+        Logo: "/components/admin/Logo#Logo",
+        Icon: "/components/admin/Icon#Icon",
+      },
+    },
   },
   collections: [Obras, Proyectos, Media, Users],
   editor: lexicalEditor(),
