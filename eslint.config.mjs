@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local agent tooling: vendored skills and caches, not app source.
+    ".claude/**",
+    ".img2threejs/**",
+    ".impeccable/**",
+    ".atl/**",
+    // Procedurally generated geometry, not hand-written.
+    "src/lib/three/**",
   ]),
 ]);
 
