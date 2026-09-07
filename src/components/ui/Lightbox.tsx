@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export interface LightboxItem {
   src: string;
@@ -26,22 +26,55 @@ export default function Lightbox({
   onNext,
   onPrev,
 }: LightboxProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const isOpen = item !== null;
+
+  // Move focus into the dialog on open and hand it back to the trigger on
+  // close, keyed on open/closed so stepping between items does not steal it.
+  useEffect(() => {
+    if (!isOpen) return;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    dialogRef.current?.focus();
+    return () => previouslyFocused?.focus();
+  }, [isOpen]);
+
   useEffect(() => {
     if (item) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "";
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (!item) return;
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowRight") onNext?.();
       if (e.key === "ArrowLeft") onPrev?.();
+
+      // Trap focus inside the dialog while it's open: aria-modal="true" is a
+      // promise the rest of the page is inert, so Tab must not leave it.
+      if (e.key === "Tab") {
+        const dialog = dialogRef.current;
+        if (!dialog) return;
+        const focusable = dialog.querySelectorAll<HTMLElement>(
+          'button, [href], [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "";
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [item, onClose, onNext, onPrev]);
@@ -53,10 +86,12 @@ export default function Lightbox({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          ref={dialogRef}
+          tabIndex={-1}
           role="dialog"
           aria-modal="true"
           aria-label={item.titulo}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2D2D2D]/95 backdrop-blur-md p-4 md:p-8 lg:p-12 cursor-default"
+          className="fixed inset-0 z-[100] flex cursor-default items-center justify-center bg-neutral-dark/95 p-4 backdrop-blur-md md:p-8 lg:p-12"
           onClick={onClose}
         >
           {/* Close Button */}
@@ -68,7 +103,7 @@ export default function Lightbox({
               e.stopPropagation();
               onClose();
             }}
-            className="absolute top-8 right-8 text-white/80 hover:text-white transition-all z-[110]"
+            className="absolute right-6 top-6 z-[110] rounded-full p-2 text-white/80 transition-all hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:right-7 md:top-7"
           >
             <svg
               width="32"
@@ -96,7 +131,7 @@ export default function Lightbox({
                 e.stopPropagation();
                 onPrev();
               }}
-              className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-all z-[110]"
+              className="absolute left-4 top-1/2 z-[110] -translate-y-1/2 rounded-full text-white/50 transition-all hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:left-8"
             >
               <svg
                 width="48"
@@ -123,7 +158,7 @@ export default function Lightbox({
                 e.stopPropagation();
                 onNext();
               }}
-              className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-all z-[110]"
+              className="absolute right-4 top-1/2 z-[110] -translate-y-1/2 rounded-full text-white/50 transition-all hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:right-8"
             >
               <svg
                 width="48"
@@ -169,7 +204,7 @@ export default function Lightbox({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-[10px] uppercase tracking-[0.5em] text-white/40 font-medium"
+                  className="text-meta font-medium uppercase tracking-[0.5em] text-white/60"
                 >
                   {eyebrow}
                 </motion.span>
@@ -177,7 +212,7 @@ export default function Lightbox({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="font-serif text-4xl md:text-5xl lg:text-6xl text-white italic leading-tight"
+                  className="font-serif text-title italic text-white"
                 >
                   {item.titulo}
                 </motion.h2>
@@ -194,11 +229,11 @@ export default function Lightbox({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="grid grid-cols-1 gap-6 text-xs uppercase tracking-[0.25em] text-white/70"
+                  className="grid grid-cols-1 gap-6 text-eyebrow uppercase tracking-meta text-white/70"
                 >
                   {item.meta.map((dato) => (
                     <div key={dato.label} className="space-y-1">
-                      <span className="text-[9px] text-white/30 block">
+                      <span className="block text-meta text-white/60">
                         {dato.label}
                       </span>
                       <span className="font-light">{dato.value}</span>
@@ -215,7 +250,7 @@ export default function Lightbox({
               >
                 <button
                   onClick={onClose}
-                  className="px-8 py-3 border border-white/10 rounded-full text-[10px] uppercase tracking-[0.3em] font-medium text-white hover:bg-white hover:text-[#2D2D2D] transition-all duration-500"
+                  className="rounded-full border border-white/10 px-8 py-3 text-meta font-medium uppercase tracking-meta text-white transition-all duration-500 hover:bg-white hover:text-neutral-dark focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
                   Continuar explorando
                 </button>

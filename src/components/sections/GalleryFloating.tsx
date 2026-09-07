@@ -2,79 +2,67 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { obras, Obra } from "@/data/obras";
-import ScrollReveal from "@/components/ui/ScrollReveal";
+import ArtworkCard from "@/components/ui/ArtworkCard";
+import SectionHeading from "@/components/ui/SectionHeading";
 import Lightbox from "@/components/ui/Lightbox";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 60 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.77, 0, 0.175, 1] as const,
-    },
-  },
-};
+import {
+  DUR,
+  EASE_IN_OUT,
+  containerVariants,
+  REVEAL_VIEWPORT,
+} from "@/lib/motion";
 
 export default function GalleryFloating() {
   const [selectedObra, setSelectedObra] = useState<Obra | null>(null);
 
-  const handleNext = useCallback(() => {
-    if (!selectedObra) return;
-    const currentIndex = obras.findIndex((o) => o.id === selectedObra.id);
-    const nextIndex = (currentIndex + 1) % obras.length;
-    setSelectedObra(obras[nextIndex]);
-  }, [selectedObra]);
-
-  const handlePrev = useCallback(() => {
-    if (!selectedObra) return;
-    const currentIndex = obras.findIndex((o) => o.id === selectedObra.id);
-    const prevIndex = (currentIndex - 1 + obras.length) % obras.length;
-    setSelectedObra(obras[prevIndex]);
-  }, [selectedObra]);
+  const step = useCallback((delta: number) => {
+    setSelectedObra((current) => {
+      if (!current) return current;
+      const index = obras.findIndex((o) => o.id === current.id);
+      return obras[(index + delta + obras.length) % obras.length];
+    });
+  }, []);
 
   return (
-    <section id="gallery" className="py-32 px-6 md:px-12 lg:px-24">
-      <ScrollReveal>
-        <div className="mb-20 text-center md:text-left">
-          <span className="text-xs uppercase tracking-[0.4em] text-accent font-medium">
-            Portafolio
-          </span>
-          <h2 className="font-serif text-4xl md:text-5xl text-neutral-dark mt-2 mb-4">
-            Galería Celestial
-          </h2>
-          <div className="w-16 h-px bg-brand/30 md:mx-0 mx-auto" />
-        </div>
-      </ScrollReveal>
+    <section id="gallery" className="px-6 py-section md:px-12 lg:px-24">
+      <div className="mx-auto max-w-shell">
+        <SectionHeading
+          eyebrow="Portafolio"
+          title="Galería Celestial"
+          align="responsive"
+          className="mb-20"
+        />
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12"
-      >
-        {obras.map((obra) => (
-          <GalleryItem 
-            key={obra.id} 
-            obra={obra} 
-            onSelect={() => setSelectedObra(obra)}
-          />
-        ))}
-      </motion.div>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={REVEAL_VIEWPORT}
+          className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-12"
+        >
+          {obras.map((obra) => (
+            <ArtworkCard
+              key={obra.id}
+              src={obra.imagen}
+              label={`Ver ${obra.titulo}, ${obra.anio}`}
+              onSelect={() => setSelectedObra(obra)}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              overlay={<ObraOverlay obra={obra} />}
+              footer={
+                <div className="mt-6 flex items-baseline justify-between px-2">
+                  <span className="font-serif text-body italic text-neutral-dark">
+                    {obra.titulo}
+                  </span>
+                  <span className="text-meta font-bold uppercase tracking-meta text-accent">
+                    {obra.anio}
+                  </span>
+                </div>
+              }
+            />
+          ))}
+        </motion.div>
+      </div>
 
       <Lightbox
         item={
@@ -92,116 +80,75 @@ export default function GalleryFloating() {
             : null
         }
         onClose={() => setSelectedObra(null)}
-        onNext={handleNext}
-        onPrev={handlePrev}
+        onNext={() => step(1)}
+        onPrev={() => step(-1)}
       />
     </section>
   );
 }
 
-function GalleryItem({ obra, onSelect }: { obra: Obra; onSelect: () => void }) {
-  const [isHovered, setIsHovered] = useState(false);
+/**
+ * Hover flourish: a badge that morphs into a full-bleed detail panel.
+ * Visibility is driven by the card's `group` state so it also appears on
+ * keyboard focus; the expanded state stays a pointer-only enhancement,
+ * since the same data is available in the lightbox the card opens.
+ */
+function ObraOverlay({ obra }: { obra: Obra }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <motion.article
-      variants={itemVariants}
-      className="gallery-item group relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setIsExpanded(false);
-      }}
-      onClick={onSelect}
-    >
-      <div className="relative bg-white/40 backdrop-blur-sm rounded-2xl overflow-hidden shadow-sm transition-all duration-700 group-hover:shadow-2xl group-hover:shadow-brand/20 group-hover:-translate-y-2 border border-white/20 cursor-none">
-        <motion.div
-          animate={{ scale: isHovered ? 1.05 : 1 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="relative aspect-[3/4] w-full"
-        >
-          <Image
-            src={obra.imagen}
-            alt={obra.titulo}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-          <div className="absolute inset-0 bg-brand/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-        </motion.div>
-
-        {/* Expansible Info Trigger */}
-        <div className="absolute inset-0 flex items-center justify-center p-6 bg-transparent overflow-hidden pointer-events-none md:pointer-events-auto">
+    <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 md:pointer-events-auto">
+      <motion.div
+        layout
+        onMouseEnter={() => setIsExpanded(true)}
+        onMouseLeave={() => setIsExpanded(false)}
+        transition={{
+          layout: { duration: DUR.base, ease: EASE_IN_OUT },
+          opacity: { duration: DUR.fast },
+        }}
+        style={{ borderRadius: isExpanded ? "16px" : "100%" }}
+        className={`relative z-20 flex flex-col items-center justify-center text-center text-white shadow-lg ${
+          isExpanded
+            ? "h-full w-full bg-brand/90 p-8 backdrop-blur-md"
+            : "h-28 w-28 bg-brand/80 backdrop-blur-sm"
+        }`}
+      >
+        {isExpanded ? (
           <motion.div
-            layout
-            onMouseEnter={() => setIsExpanded(true)}
-            onMouseLeave={() => setIsExpanded(false)}
-            transition={{
-              layout: { duration: 0.5, ease: [0.23, 1, 0.32, 1] },
-              opacity: { duration: 0.3 }
-            }}
-            style={{
-              borderRadius: isExpanded ? "16px" : "100%",
-            }}
-            className={`
-              relative z-20 flex flex-col items-center justify-center
-              ${isExpanded 
-                ? "w-full h-full bg-brand/90 backdrop-blur-md p-8" 
-                : "w-28 h-28 bg-brand/80 backdrop-blur-sm"
-              }
-              shadow-lg text-white text-center
-              ${isHovered ? "opacity-100 scale-100" : "opacity-0 scale-90 translate-y-4"}
-              transition-all duration-500
-            `}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex h-full w-full flex-col items-center justify-center gap-6"
           >
-            {!isExpanded ? (
-              <motion.span 
+            <div className="space-y-4">
+              <motion.h3
                 layout="position"
-                className="text-[10px] uppercase tracking-[0.3em] font-semibold"
+                className="font-serif text-title italic"
               >
-                Ver Obra
-              </motion.span>
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="w-full h-full flex flex-col justify-center items-center gap-6"
-              >
-                <div className="space-y-4">
-                  <motion.h3 
-                    layout="position"
-                    className="font-serif text-3xl md:text-4xl italic"
-                  >
-                    {obra.titulo}
-                  </motion.h3>
-                  
-                  <div className="h-px w-12 bg-white/40 mx-auto" />
-                  
-                  <div className="space-y-2 text-xs md:text-sm uppercase tracking-[0.2em] font-light text-white/90">
-                    <p>{obra.anio}</p>
-                    <p>{obra.tecnica}</p>
-                    <p>{obra.tamano}</p>
-                  </div>
-                </div>
+                {obra.titulo}
+              </motion.h3>
 
-                <div className="mt-4 px-6 py-2 border border-white/30 rounded-full text-[10px] uppercase tracking-widest bg-white text-brand">
-                  Ver Detalles
-                </div>
-              </motion.div>
-            )}
+              <div className="mx-auto h-px w-12 bg-white/40" />
+
+              <div className="space-y-2 text-eyebrow font-light uppercase tracking-meta text-white/90">
+                <p>{obra.anio}</p>
+                <p>{obra.tecnica}</p>
+                <p>{obra.tamano}</p>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-full border border-white/30 bg-white px-6 py-2 text-meta uppercase tracking-meta text-brand">
+              Ver detalles
+            </div>
           </motion.div>
-        </div>
-      </div>
-
-      {/* Static Label */}
-      <div className="mt-6 flex justify-between items-baseline px-2">
-        <span className="font-serif text-xl text-neutral-dark italic">
-          {obra.titulo}
-        </span>
-        <span className="text-[10px] uppercase tracking-widest text-brand font-bold">
-          {obra.anio}
-        </span>
-      </div>
-    </motion.article>
+        ) : (
+          <motion.span
+            layout="position"
+            className="text-meta font-semibold uppercase tracking-meta"
+          >
+            Ver obra
+          </motion.span>
+        )}
+      </motion.div>
+    </div>
   );
 }

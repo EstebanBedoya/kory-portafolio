@@ -4,16 +4,18 @@ import "./globals.css";
 import CustomCursor from "@/components/ui/CustomCursor";
 import NavBar from "@/components/sections/NavBar";
 import ParticlesBackground from "@/components/ui/ParticlesBackground";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 const cormorant = Cormorant_Garamond({
-  variable: "--font-serif",
+  variable: "--font-cormorant",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
 });
 
 const outfit = Outfit({
-  variable: "--font-sans",
+  variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
   display: "swap",
@@ -39,7 +41,7 @@ export default function RootLayout({
         <ParticlesBackground />
         <CustomCursor />
         <NavBar />
-        {children}
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

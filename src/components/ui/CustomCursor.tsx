@@ -1,71 +1,76 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useReducedMotion } from "framer-motion";
+import { useMediaQuery } from "@/lib/useMediaQuery";
+
+const CURSOR_SIZE = 32;
 
 export default function CustomCursor() {
-  const [isGallery, setIsGallery] = useState(false);
+  // Only replace a real pointer, and only when motion is welcome. The CSS
+  // `cursor: none` rule is gated on the same pointer query.
+  const hasFinePointer = useMediaQuery("(pointer: fine)");
+  const reduceMotion = useReducedMotion();
+  const isEnabled = hasFinePointer && !reduceMotion;
+
+  const [isOverArtwork, setIsOverArtwork] = useState(false);
+
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-
-  const springConfig = { damping: 20, stiffness: 300 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
+  const cursorXSpring = useSpring(cursorX, { damping: 20, stiffness: 300 });
+  const cursorYSpring = useSpring(cursorY, { damping: 20, stiffness: 300 });
 
   useEffect(() => {
+    if (!isEnabled) return;
+
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX - 16);
-      cursorY.set(e.clientY - 16);
+      cursorX.set(e.clientX - CURSOR_SIZE / 2);
+      cursorY.set(e.clientY - CURSOR_SIZE / 2);
     };
 
-    const handleMouseEnter = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isGalleryItem = 
-        target.closest("[data-gallery-item]") ||
-        target.classList.contains("gallery-item");
-      setIsGallery(!!isGalleryItem);
+    const trackTarget = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null;
+      setIsOverArtwork(!!target?.closest("[data-gallery-item]"));
     };
 
     window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleMouseEnter);
+    window.addEventListener("mouseover", trackTarget);
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
-      window.removeEventListener("mouseover", handleMouseEnter);
+      window.removeEventListener("mouseover", trackTarget);
     };
-  }, [cursorX, cursorY]);
+  }, [cursorX, cursorY, isEnabled]);
+
+  if (!isEnabled) return null;
 
   return (
     <motion.div
-      className="fixed top-0 left-0 pointer-events-none z-[9999]"
-      style={{
-        x: cursorXSpring,
-        y: cursorYSpring,
-      }}
+      aria-hidden="true"
+      className="pointer-events-none fixed left-0 top-0 z-[9999]"
+      style={{ x: cursorXSpring, y: cursorYSpring }}
     >
-      {isGallery ? (
+      {isOverArtwork ? (
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="w-32 h-32 rounded-full bg-[#121212]/90 backdrop-blur-sm flex items-center justify-center border border-white/20"
+          className="flex h-32 w-32 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-neutral-dark/90 backdrop-blur-sm"
         >
-          <span className="text-xs font-sans uppercase tracking-[0.3em] text-white font-medium">
-            Ver Obra
+          <span className="font-sans text-meta font-medium uppercase tracking-meta text-white">
+            Ver obra
           </span>
         </motion.div>
       ) : (
-        <svg width="32" height="32" viewBox="0 0 32 32">
-          {/* Inner solid dot - much darker now */}
-          <circle cx="16" cy="16" r="4.5" fill="#121212" />
-          {/* Outer ring - darker and slightly thicker */}
-          <circle 
-            cx="16" 
-            cy="16" 
-            r="12" 
-            stroke="#121212" 
-            strokeWidth="1.5" 
+        <svg width={CURSOR_SIZE} height={CURSOR_SIZE} viewBox="0 0 32 32">
+          <circle cx="16" cy="16" r="4.5" fill="var(--color-neutral-dark)" />
+          <circle
+            cx="16"
+            cy="16"
+            r="12"
+            fill="none"
+            stroke="var(--color-neutral-dark)"
+            strokeWidth="1.5"
             strokeDasharray="2 4"
-            fill="none" 
             opacity="0.6"
           />
         </svg>

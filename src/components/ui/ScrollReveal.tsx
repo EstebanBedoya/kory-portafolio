@@ -1,8 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { ReactNode, useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
+import { DUR, EASE_OUT, REVEAL_VIEWPORT } from "@/lib/motion";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -10,20 +10,28 @@ interface ScrollRevealProps {
   delay?: number;
 }
 
-export default function ScrollReveal({ children, className = "", delay = 0 }: ScrollRevealProps) {
+const HIDDEN = "polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)";
+const SHOWN = "polygon(0 0, 100% 0, 100% 100%, 0% 100%)";
+
+export default function ScrollReveal({
+  children,
+  className = "",
+  delay = 0,
+}: ScrollRevealProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, REVEAL_VIEWPORT);
+  const reduceMotion = useReducedMotion();
+
+  if (reduceMotion) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <div ref={ref} className={className}>
       <motion.div
-        initial={{ clipPath: "polygon(0 100%, 100% 100%, 100% 100%, 0% 100%)" }}
-        animate={isInView ? { clipPath: "polygon(0 0, 100% 0, 100% 100%, 0% 100%)" } : {}}
-        transition={{ 
-          duration: 0.8, 
-          delay, 
-          ease: [0.77, 0, 0.175, 1] 
-        }}
+        initial={{ clipPath: HIDDEN }}
+        animate={isInView ? { clipPath: SHOWN } : undefined}
+        transition={{ duration: DUR.slow, delay, ease: EASE_OUT }}
       >
         {children}
       </motion.div>

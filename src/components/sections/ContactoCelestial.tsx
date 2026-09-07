@@ -1,27 +1,21 @@
 "use client";
 
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import SectionHeading from "@/components/ui/SectionHeading";
 
 export default function ContactoCelestial() {
   return (
-    <section id="contact" className="py-32 px-6 md:px-12 lg:px-24">
-      <div className="max-w-2xl mx-auto text-center">
-        <ScrollReveal>
-          <div className="mb-12">
-            <span className="text-xs uppercase tracking-[0.4em] text-brand">
-              Contacto
-            </span>
-            <div className="w-16 h-px bg-brand/30 mt-4 mx-auto" />
-          </div>
-        </ScrollReveal>
+    <section id="contact" className="px-6 py-section-lg md:px-12 lg:px-24">
+      <div className="mx-auto max-w-reading text-center">
+        <SectionHeading eyebrow="Contacto" align="center" className="mb-12" />
 
         <div className="space-y-12">
           <ScrollReveal delay={0.1}>
-            <a href="mailto:estefabegi@gmail.com" className="block group">
-              <span className="text-xs uppercase tracking-[0.3em] text-neutral-dark/70 block mb-3">
+            <a href="mailto:estefabegi@gmail.com" className="group block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+              <span className="mb-3 block text-meta uppercase tracking-meta text-neutral-dark/70">
                 Email
               </span>
-              <span className="font-serif text-3xl md:text-4xl text-neutral-dark group-hover:text-brand transition-colors duration-300">
+              <span className="font-serif text-title text-neutral-dark transition-colors duration-300 group-hover:text-brand">
                 estefabegi@gmail.com
               </span>
             </a>
@@ -32,12 +26,12 @@ export default function ContactoCelestial() {
               href="https://www.instagram.com/its_koryn"
               target="_blank"
               rel="noopener noreferrer"
-              className="block group"
+              className="group block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
-              <span className="text-xs uppercase tracking-[0.3em] text-neutral-dark/70 block mb-3">
+              <span className="mb-3 block text-meta uppercase tracking-meta text-neutral-dark/70">
                 Instagram
               </span>
-              <span className="font-serif text-3xl md:text-4xl text-neutral-dark group-hover:text-brand transition-colors duration-300">
+              <span className="font-serif text-title text-neutral-dark transition-colors duration-300 group-hover:text-brand">
                 @its_koryn
               </span>
             </a>
@@ -46,7 +40,7 @@ export default function ContactoCelestial() {
 
         <ScrollReveal delay={0.4}>
           <div className="mt-24 pt-12 border-t border-neutral-dark/10">
-            <p className="text-xs uppercase tracking-[0.2em] text-neutral-dark/50">
+            <p className="text-meta uppercase tracking-meta text-neutral-dark/70">
               Estefanía Bedoya Giraldo © 2026
             </p>
           </div>

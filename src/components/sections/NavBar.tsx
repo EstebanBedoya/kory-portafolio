@@ -35,10 +35,10 @@ export default function NavBar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: [0.77, 0, 0.175, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 px-6 py-4 md:px-12 flex justify-between items-center transition-all duration-500 ${
-          scrolled || isOpen ? "bg-white/10 backdrop-blur-md shadow-sm" : "bg-transparent"
+          scrolled || isOpen ? "bg-[color:var(--color-paper)]/10 backdrop-blur-md shadow-sm" : "bg-transparent"
         }`}
       >
-        <Link href="/" className="mix-blend-multiply relative z-50">
+        <Link href="/" className="relative z-50 rounded-sm mix-blend-multiply focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
           <Image
             src="/logo-name.png"
             alt="Kory"
@@ -49,12 +49,12 @@ export default function NavBar() {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex gap-8 text-xs uppercase tracking-[0.2em] text-neutral-dark">
+        <div className="hidden gap-8 text-eyebrow uppercase tracking-meta text-neutral-dark md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.name}
               href={link.href}
-              className="hover:text-brand transition-colors duration-300"
+              className="rounded-sm transition-colors duration-300 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
             >
               {link.name}
             </Link>
@@ -64,8 +64,10 @@ export default function NavBar() {
         {/* Mobile Toggle Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden relative z-50 p-2 text-neutral-dark focus:outline-none"
+          className="relative z-50 rounded-sm p-3 text-neutral-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:hidden"
           aria-label="Toggle Menu"
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
         >
           <div className="w-6 h-5 relative flex flex-col justify-between">
             <motion.span
@@ -88,13 +90,14 @@ export default function NavBar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-40 bg-white/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-12"
+            className="fixed inset-0 z-40 bg-[color:var(--color-paper)]/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-12"
           >
-            <div className="flex flex-col items-center gap-8 text-lg uppercase tracking-[0.3em] font-medium text-neutral-dark">
+            <div className="flex flex-col items-center gap-8 text-body font-medium uppercase tracking-meta text-neutral-dark">
               {navLinks.map((link, i) => (
                 <motion.div
                   key={link.name}
@@ -105,7 +108,7 @@ export default function NavBar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="hover:text-brand transition-colors duration-300"
+                    className="rounded-sm transition-colors duration-300 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
                   >
                     {link.name}
                   </Link>
