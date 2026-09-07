@@ -4,8 +4,13 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import Image from "next/image";
 import { useRef } from "react";
 import { DUR, EASE_IN_OUT } from "@/lib/motion";
+import type { TextosSitio } from "@/types/content";
 
-export default function HeroCelestial() {
+interface HeroCelestialProps {
+  textos: TextosSitio["hero"];
+}
+
+export default function HeroCelestial({ textos }: HeroCelestialProps) {
   const containerRef = useRef(null);
   const reduceMotion = useReducedMotion();
 
@@ -50,10 +55,11 @@ export default function HeroCelestial() {
         className="relative z-10 max-w-3xl px-6 text-center"
       >
         <h1 className="font-serif text-display text-neutral-dark">
-          El arte de <span className="italic text-brand">recordar</span>
+          {textos.titulo}{" "}
+          <span className="italic text-brand">{textos.tituloDestacado}</span>
         </h1>
         <p className="mt-6 font-sans text-lede uppercase tracking-meta text-neutral-dark">
-          Donde la memoria se vuelve materia
+          {textos.bajada}
         </p>
       </motion.div>
 
@@ -65,7 +71,7 @@ export default function HeroCelestial() {
       >
         <div className="flex flex-col items-center gap-3">
           <span className="text-meta uppercase tracking-eyebrow text-neutral-dark/70">
-            Estefanía Bedoya Giraldo
+            {textos.firma}
           </span>
           <motion.div
             animate={reduceMotion ? undefined : { y: [0, 8, 0] }}

@@ -57,7 +57,7 @@ async function truncateTables() {
   const pg = new Client({ connectionString: requireEnv("DATABASE_URI") });
   await pg.connect();
   await pg.query(
-    "TRUNCATE obras, proyectos, proyectos_imagenes, proyectos_introduccion, media RESTART IDENTITY CASCADE",
+    "TRUNCATE obras, proyectos, proyectos_imagenes, proyectos_introduccion, media, textos RESTART IDENTITY CASCADE",
   );
   await pg.end();
   console.log("✓ content tables truncated (users left alone)");

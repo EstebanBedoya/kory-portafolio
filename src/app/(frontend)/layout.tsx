@@ -5,7 +5,7 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import NavBar from "@/components/sections/NavBar";
 import ParticlesBackground from "@/components/ui/ParticlesBackground";
 import SmoothScroll from "@/components/ui/SmoothScroll";
-import { getNavProyectos } from "@/lib/content";
+import { getNavProyectos, getTextos } from "@/lib/content";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -22,13 +22,20 @@ const outfit = Outfit({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "KORY",
-  description: "Portafolio artístico celestial. El arte de recordar donde la memoria se vuelve materia.",
-  icons: {
-    icon: "/logo-silueta.png",
-  },
-};
+/**
+ * Read from the CMS so the artist controls how the site appears in search
+ * results, not just how it reads on the page.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { meta } = await getTextos();
+  return {
+    title: meta.titulo,
+    description: meta.descripcion,
+    icons: {
+      icon: "/logo-silueta.png",
+    },
+  };
+}
 
 export default async function RootLayout({
   children,

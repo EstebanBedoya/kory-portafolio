@@ -10,6 +10,7 @@ import type {
   Proyecto,
   ProyectoImagen,
   ProyectoParrafo,
+  TextosSitio,
 } from "@/types/content";
 
 /**
@@ -118,6 +119,50 @@ export async function getProyectos(): Promise<Proyecto[]> {
   return docs
     .map(toProyecto)
     .filter((proyecto): proyecto is Proyecto => proyecto !== null);
+}
+
+/**
+ * The site's copy.
+ *
+ * The artist's statement is stored as one block of prose and split here on
+ * blank lines, which is how it was written before and the most natural way to
+ * type a bio. Blank runs are dropped so a stray extra newline cannot produce
+ * an empty paragraph with its own animation.
+ */
+export async function getTextos(): Promise<TextosSitio> {
+  const payload = await client();
+  const doc = await payload.findGlobal({ slug: "textos", depth: 0 });
+
+  return {
+    hero: {
+      titulo: doc.heroTitulo,
+      tituloDestacado: doc.heroTituloDestacado,
+      bajada: doc.heroBajada,
+      firma: doc.heroFirma,
+    },
+    acerca: {
+      eyebrow: doc.acercaEyebrow,
+      parrafos: doc.acercaDeclaracion.split(/\n\s*\n/)
+        .map((parrafo) => parrafo.trim())
+        .filter(Boolean),
+      lugar: doc.acercaLugar,
+      anio: doc.acercaAnio,
+    },
+    galeria: {
+      eyebrow: doc.galeriaEyebrow,
+      titulo: doc.galeriaTitulo,
+    },
+    contacto: {
+      eyebrow: doc.contactoEyebrow,
+      email: doc.contactoEmail,
+      instagram: doc.contactoInstagram.replace(/^@/, ""),
+      copyright: doc.contactoCopyright,
+    },
+    meta: {
+      titulo: doc.metaTitulo,
+      descripcion: doc.metaDescripcion,
+    },
+  };
 }
 
 /**

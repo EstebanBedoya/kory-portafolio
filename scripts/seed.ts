@@ -20,6 +20,7 @@ import { getPayload } from "payload";
 
 import { obras } from "../src/data/obras";
 import { proyectos } from "../src/data/proyectos";
+import { textos } from "../src/data/textos";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.resolve(dirname, "..", "public");
@@ -76,6 +77,27 @@ async function main() {
     console.log(`✓ admin account created for ${email}`);
   } else {
     console.log(`· ${users.totalDocs} user(s) already present, leaving them alone`);
+  }
+
+  // --- Textos del sitio ----------------------------------------------------
+  // A global has exactly one record, so this overwrites rather than appends.
+  // Only written when it is still empty: re-running the seed must not undo
+  // copy the artist has since edited.
+  //
+  // The emptiness check uses the artist's statement, which is the one field
+  // with no defaultValue. findGlobal happily returns the configured defaults
+  // for a global that has never been saved, so testing any defaulted field
+  // would report content that is not actually in the database.
+  const textosActuales = await payload.findGlobal({ slug: "textos", depth: 0 });
+  if (!textosActuales?.acercaDeclaracion) {
+    await payload.updateGlobal({
+      slug: "textos",
+      data: textos,
+      context: seedContext(),
+    });
+    console.log("✓ site copy");
+  } else {
+    console.log("· site copy already present, leaving it alone");
   }
 
   // --- Obras ---------------------------------------------------------------

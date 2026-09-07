@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import type { Obra } from "@/types/content";
+import type { Obra, TextosSitio } from "@/types/content";
 import ArtworkCard from "@/components/ui/ArtworkCard";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Lightbox from "@/components/ui/Lightbox";
@@ -15,9 +15,10 @@ import {
 
 interface GalleryFloatingProps {
   obras: Obra[];
+  textos: TextosSitio["galeria"];
 }
 
-export default function GalleryFloating({ obras }: GalleryFloatingProps) {
+export default function GalleryFloating({ obras, textos }: GalleryFloatingProps) {
   const [selectedObra, setSelectedObra] = useState<Obra | null>(null);
 
   // `obras` belongs in the dependency list now that it arrives as a prop:
@@ -38,8 +39,8 @@ export default function GalleryFloating({ obras }: GalleryFloatingProps) {
     <section id="gallery" className="px-6 py-section md:px-12 lg:px-24">
       <div className="mx-auto max-w-shell">
         <SectionHeading
-          eyebrow="Portafolio"
-          title="Galería Celestial"
+          eyebrow={textos.eyebrow}
+          title={textos.titulo}
           align="responsive"
           className="mb-20"
         />

@@ -91,8 +91,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    textos: Texto;
+  };
+  globalsSelect: {
+    textos: TextosSelect<false> | TextosSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -477,6 +481,80 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "textos".
+ */
+export interface Texto {
+  id: number;
+  /**
+   * La primera parte del título, en tipografía normal.
+   */
+  heroTitulo: string;
+  /**
+   * Se compone en itálica y en color de marca, a continuación del título. Va separada porque son dos voces tipográficas distintas, no un solo texto.
+   */
+  heroTituloDestacado: string;
+  /**
+   * Se muestra en mayúsculas.
+   */
+  heroBajada: string;
+  /**
+   * El nombre al pie de la portada.
+   */
+  heroFirma: string;
+  acercaEyebrow: string;
+  /**
+   * Separá los párrafos con una línea en blanco. Cada uno aparece con su propia animación de entrada.
+   */
+  acercaDeclaracion: string;
+  acercaLugar: string;
+  acercaAnio: string;
+  galeriaEyebrow: string;
+  galeriaTitulo: string;
+  contactoEyebrow: string;
+  /**
+   * Se muestra tal cual y se enlaza como mailto.
+   */
+  contactoEmail: string;
+  /**
+   * Sin la arroba. El enlace se arma solo.
+   */
+  contactoInstagram: string;
+  contactoCopyright: string;
+  metaTitulo: string;
+  /**
+   * Un par de frases. Es lo que se lee bajo el título en los resultados de búsqueda.
+   */
+  metaDescripcion: string;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "textos_select".
+ */
+export interface TextosSelect<T extends boolean = true> {
+  heroTitulo?: T;
+  heroTituloDestacado?: T;
+  heroBajada?: T;
+  heroFirma?: T;
+  acercaEyebrow?: T;
+  acercaDeclaracion?: T;
+  acercaLugar?: T;
+  acercaAnio?: T;
+  galeriaEyebrow?: T;
+  galeriaTitulo?: T;
+  contactoEyebrow?: T;
+  contactoEmail?: T;
+  contactoInstagram?: T;
+  contactoCopyright?: T;
+  metaTitulo?: T;
+  metaDescripcion?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

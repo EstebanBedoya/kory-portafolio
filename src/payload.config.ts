@@ -11,6 +11,7 @@ import { Media } from "@/collections/Media";
 import { Obras } from "@/collections/Obras";
 import { Proyectos } from "@/collections/Proyectos";
 import { Users } from "@/collections/Users";
+import { Textos } from "@/globals/Textos";
 import { requireEnv } from "@/lib/env";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -67,6 +68,7 @@ export default buildConfig({
     },
   },
   collections: [Obras, Proyectos, Media, Users],
+  globals: [Textos],
   editor: lexicalEditor(),
   secret: requireEnv("PAYLOAD_SECRET"),
   typescript: {

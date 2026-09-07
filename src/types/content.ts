@@ -43,3 +43,42 @@ export interface Proyecto {
 
 /** What the nav needs to build its links — nothing more. */
 export type NavProyecto = Pick<Proyecto, "id" | "titulo">;
+
+/**
+ * Every piece of copy on the site that is not an artwork or a project.
+ *
+ * Grouped by section rather than kept flat, so each component receives only
+ * what it renders instead of a bag of fifteen unrelated strings.
+ */
+export interface TextosSitio {
+  hero: {
+    /** Rendered in the regular face. */
+    titulo: string;
+    /** Rendered italic and in the brand colour, following the title. */
+    tituloDestacado: string;
+    bajada: string;
+    firma: string;
+  };
+  acerca: {
+    eyebrow: string;
+    /** One entry per paragraph; each gets its own staggered reveal. */
+    parrafos: string[];
+    lugar: string;
+    anio: string;
+  };
+  galeria: {
+    eyebrow: string;
+    titulo: string;
+  };
+  contacto: {
+    eyebrow: string;
+    email: string;
+    /** Handle without the `@`; the link is built from it. */
+    instagram: string;
+    copyright: string;
+  };
+  meta: {
+    titulo: string;
+    descripcion: string;
+  };
+}
