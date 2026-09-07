@@ -5,6 +5,7 @@ import CustomCursor from "@/components/ui/CustomCursor";
 import NavBar from "@/components/sections/NavBar";
 import ParticlesBackground from "@/components/ui/ParticlesBackground";
 import SmoothScroll from "@/components/ui/SmoothScroll";
+import { getNavProyectos } from "@/lib/content";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -29,18 +30,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // The nav lists the projects, so this segment reads from the CMS. It stays
+  // part of the static shell; only /admin queries per request.
+  const proyectos = await getNavProyectos();
+
   return (
     <html lang="es" className={`${cormorant.variable} ${outfit.variable}`}>
       <body>
         <div className="noise-overlay" />
         <ParticlesBackground />
         <CustomCursor />
-        <NavBar />
+        <NavBar proyectos={proyectos} />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

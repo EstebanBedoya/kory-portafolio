@@ -4,9 +4,13 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { proyectos } from "@/data/proyectos";
+import type { NavProyecto } from "@/types/content";
 
-export default function NavBar() {
+interface NavBarProps {
+  proyectos: NavProyecto[];
+}
+
+export default function NavBar({ proyectos }: NavBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 

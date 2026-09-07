@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { obras, Obra } from "@/data/obras";
+import type { Obra } from "@/types/content";
 import ArtworkCard from "@/components/ui/ArtworkCard";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Lightbox from "@/components/ui/Lightbox";
@@ -13,16 +13,26 @@ import {
   REVEAL_VIEWPORT,
 } from "@/lib/motion";
 
-export default function GalleryFloating() {
+interface GalleryFloatingProps {
+  obras: Obra[];
+}
+
+export default function GalleryFloating({ obras }: GalleryFloatingProps) {
   const [selectedObra, setSelectedObra] = useState<Obra | null>(null);
 
-  const step = useCallback((delta: number) => {
-    setSelectedObra((current) => {
-      if (!current) return current;
-      const index = obras.findIndex((o) => o.id === current.id);
-      return obras[(index + delta + obras.length) % obras.length];
-    });
-  }, []);
+  // `obras` belongs in the dependency list now that it arrives as a prop:
+  // without it this closure would keep pointing at the first render's array
+  // and the lightbox arrows would step through stale data.
+  const step = useCallback(
+    (delta: number) => {
+      setSelectedObra((current) => {
+        if (!current) return current;
+        const index = obras.findIndex((o) => o.id === current.id);
+        return obras[(index + delta + obras.length) % obras.length];
+      });
+    },
+    [obras],
+  );
 
   return (
     <section id="gallery" className="px-6 py-section md:px-12 lg:px-24">

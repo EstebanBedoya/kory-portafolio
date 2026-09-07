@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Proyecto } from "@/data/proyectos";
+import type { Proyecto } from "@/types/content";
 import ArtworkCard from "@/components/ui/ArtworkCard";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 import SectionHeading from "@/components/ui/SectionHeading";

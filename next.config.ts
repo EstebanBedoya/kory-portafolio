@@ -27,9 +27,25 @@ function mediaRemotePattern() {
   };
 }
 
+const mediaPattern = mediaRemotePattern();
+
+/**
+ * Next 16 refuses to optimise images whose host resolves to a private IP,
+ * which is the right default: it is what stops the optimiser being used to
+ * probe an internal network.
+ *
+ * Local development serves media from MinIO on localhost, so the check has to
+ * be relaxed there or every image 400s. Scoped to a local asset host, so it
+ * can never be in effect against the production bucket.
+ */
+const assetHostIsLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(
+  mediaPattern.hostname,
+);
+
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [mediaRemotePattern()],
+    remotePatterns: [mediaPattern],
+    ...(assetHostIsLocal ? { dangerouslyAllowLocalIP: true } : {}),
   },
 };
 
