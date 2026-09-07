@@ -1,0 +1,54 @@
+# Local development dependencies.
+#
+# Mirrors what production provides — a Postgres database and S3-compatible
+# object storage — so the upload path exercised locally is the same one that
+# runs on Vercel. MinIO is used here rather than a filesystem adapter
+# precisely so that presigned browser uploads are tested for real.
+#
+#   docker compose -f docker-compose.dev.yml up -d
+#
+# This file is for development only. Production Postgres runs on the VPS with
+# TLS enabled; see docker-compose.postgres.yml.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: kory-postgres-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kory
+      POSTGRES_PASSWORD: kory
+      POSTGRES_DB: kory
+    ports:
+      # 5433 to stay out of the way of any Postgres already on the host.
+      - "5433:5432"
+    volumes:
+      - kory-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kory -d kory"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    container_name: kory-minio-dev
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: koryminio
+      MINIO_ROOT_PASSWORD: koryminio123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - kory-minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  kory-postgres-data:
+  kory-minio-data:

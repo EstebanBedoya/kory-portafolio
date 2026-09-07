@@ -2,19 +2,33 @@
   "name": "estefa-page",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "ci": "payload migrate && next build",
+    "payload": "payload",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.88.0",
+    "@payloadcms/next": "^3.88.0",
+    "@payloadcms/richtext-lexical": "^3.88.0",
+    "@payloadcms/storage-s3": "^3.88.0",
     "@types/three": "^0.185.4",
     "framer-motion": "^12.35.2",
+    "graphql": "^16.14.2",
     "lenis": "^1.3.18",
     "next": "16.3.4",
+    "payload": "^3.88.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.4",
     "three": "^0.185.1"
   },
   "devDependencies": {
@@ -24,7 +38,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "sass": "^1.104.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }
