@@ -6,8 +6,7 @@
  */
 export function Icon() {
   return (
-    // eslint-disable-next-line @next/next/no-img-element -- a 22px static
-    // asset in CMS chrome has nothing to gain from the image optimiser.
+    // eslint-disable-next-line @next/next/no-img-element -- deliberate, see above
     <img
       src="/logo-silueta.png"
       alt="Kory"
