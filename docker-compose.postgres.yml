@@ -1,0 +1,55 @@
+# Production Postgres, deployed on the VPS through Dokploy as a Compose stack.
+#
+# Deliberately NOT Dokploy's managed "Database" service type: that one has no
+# TLS support (Dokploy issues #3620 and #92), and this database is reachable
+# from the public internet because Vercel has no stable egress IP to
+# allowlist. Unencrypted would mean handing the credentials to anyone able to
+# redirect the traffic.
+#
+# Certificates come from Dokploy's File Mounts (Advanced -> Mounts), not from
+# the repository: auto-deploy re-clones the repo on every deploy and wipes
+# anything mounted from it.
+#
+# Postgres refuses to start if the private key is group- or world-readable, so
+# the key is copied to a private location and locked down before the server
+# starts. Mounting it read-only means its permissions cannot be fixed in place.
+#
+# See DEPLOY.md for generating the CA and wiring the environment.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    command:
+      - sh
+      - -c
+      - |
+        mkdir -p /var/lib/postgresql/ssl
+        cp /etc/postgres/ssl/server.crt /etc/postgres/ssl/server.key /var/lib/postgresql/ssl/
+        chown postgres:postgres /var/lib/postgresql/ssl/server.key /var/lib/postgresql/ssl/server.crt
+        chmod 600 /var/lib/postgresql/ssl/server.key
+        exec docker-entrypoint.sh postgres \
+          -c ssl=on \
+          -c ssl_cert_file=/var/lib/postgresql/ssl/server.crt \
+          -c ssl_key_file=/var/lib/postgresql/ssl/server.key \
+          -c max_connections=200
+    ports:
+      # A non-default external port. Not security on its own — it just keeps
+      # the logs free of the internet's background scanning.
+      - "${POSTGRES_PORT:-55432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # Dokploy File Mounts land here. Mount server.crt and server.key.
+      - ../files/ssl:/etc/postgres/ssl:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-data:
