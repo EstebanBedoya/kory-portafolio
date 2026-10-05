@@ -2,17 +2,23 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 export interface LightboxItem {
   src: string;
   alt: string;
   titulo: string;
+  /** Optional prose; paragraphs split on blank lines. */
+  descripcion?: string;
   meta?: { label: string; value: string }[];
 }
 
 interface LightboxProps {
   item: LightboxItem | null;
+  /** Replaces the single image, e.g. for a work shown as a carousel or grid. */
+  media?: ReactNode;
+  /** Extra controls rendered under the metadata, e.g. a view switcher. */
+  controls?: ReactNode;
   eyebrow?: string;
   onClose: () => void;
   onNext?: () => void;
@@ -21,6 +27,8 @@ interface LightboxProps {
 
 export default function Lightbox({
   item,
+  media,
+  controls,
   eyebrow = "Obra seleccionada",
   onClose,
   onNext,
@@ -91,6 +99,10 @@ export default function Lightbox({
           role="dialog"
           aria-modal="true"
           aria-label={item.titulo}
+          // Lenis listens for wheel events on the window and scrolls the page
+          // underneath, even though body overflow is hidden. This opts the
+          // dialog out so its own scrollable areas (grid, description) work.
+          data-lenis-prevent
           className="fixed inset-0 z-[100] flex cursor-default items-center justify-center bg-neutral-dark/95 p-4 backdrop-blur-md md:p-8 lg:p-12"
           onClick={onClose}
         >
@@ -187,14 +199,16 @@ export default function Lightbox({
           >
             {/* Image Container */}
             <div className="relative w-full h-[45vh] md:h-[80vh] flex-[1.5] group">
-              <Image
-                src={item.src}
-                alt={item.alt}
-                fill
-                className="object-contain drop-shadow-2xl"
-                sizes="(max-width: 768px) 100vw, 60vw"
-                priority
-              />
+              {media ?? (
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-contain drop-shadow-2xl"
+                  sizes="(max-width: 768px) 100vw, 60vw"
+                  priority
+                />
+              )}
             </div>
 
             {/* Info Container */}
@@ -224,6 +238,17 @@ export default function Lightbox({
                 />
               </div>
 
+              {item.descripcion && (
+                <div className="max-h-48 space-y-4 overflow-y-auto font-sans text-lede text-white/80">
+                  {item.descripcion
+                    .split(/\n\s*\n/)
+                    .filter(Boolean)
+                    .map((parrafo, i) => (
+                      <p key={i}>{parrafo}</p>
+                    ))}
+                </div>
+              )}
+
               {item.meta && item.meta.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -241,6 +266,8 @@ export default function Lightbox({
                   ))}
                 </motion.div>
               )}
+
+              {controls}
 
               <motion.div
                 initial={{ opacity: 0 }}

@@ -1,9 +1,10 @@
 import HeroCelestial from "@/components/sections/HeroCelestial";
 import AboutCelestial from "@/components/sections/AboutCelestial";
-import GalleryFloating from "@/components/sections/GalleryFloating";
-import ProjectGallery from "@/components/sections/ProjectGallery";
+import Galerias from "@/components/sections/Galerias";
+import Popup from "@/components/sections/Popup";
+import MasSecciones from "@/components/sections/MasSecciones";
 import ContactoCelestial from "@/components/sections/ContactoCelestial";
-import { getObras, getProyectos, getTextos } from "@/lib/content";
+import { getObras, getTextos } from "@/lib/content";
 
 /**
  * Prerendered, with a daily rebuild as a backstop. The real mechanism is
@@ -13,20 +14,18 @@ import { getObras, getProyectos, getTextos } from "@/lib/content";
 export const revalidate = 86400;
 
 export default async function HomePage() {
-  const [obras, proyectos, textos] = await Promise.all([
+  const [obras, textos] = await Promise.all([
     getObras(),
-    getProyectos(),
     getTextos(),
   ]);
 
   return (
     <main>
       <HeroCelestial textos={textos.hero} />
+      <Galerias obras={obras} textos={textos.galeria} />
+      <Popup />
       <AboutCelestial textos={textos.acerca} />
-      <GalleryFloating obras={obras} textos={textos.galeria} />
-      {proyectos.map((proyecto) => (
-        <ProjectGallery key={proyecto.id} proyecto={proyecto} />
-      ))}
+      <MasSecciones />
       <ContactoCelestial textos={textos.contacto} />
     </main>
   );

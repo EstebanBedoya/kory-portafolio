@@ -4,13 +4,16 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import type { NavProyecto } from "@/types/content";
 
-interface NavBarProps {
-  proyectos: NavProyecto[];
-}
+/** The four entries of the public menu; everything else sits at the foot of the page. */
+const NAV_LINKS = [
+  { name: "Galerías", href: "#galerias" },
+  { name: "Popup", href: "#popup" },
+  { name: "Bio + CV", href: "#about" },
+  { name: "Contacto", href: "#contact" },
+];
 
-export default function NavBar({ proyectos }: NavBarProps) {
+export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -21,16 +24,6 @@ export default function NavBar({ proyectos }: NavBarProps) {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const navLinks = [
-    { name: "Acerca", href: "#about" },
-    { name: "Galería", href: "#gallery" },
-    ...proyectos.map((proyecto) => ({
-      name: proyecto.titulo,
-      href: `#${proyecto.id}`,
-    })),
-    { name: "Contacto", href: "#contact" },
-  ];
 
   return (
     <>
@@ -54,7 +47,7 @@ export default function NavBar({ proyectos }: NavBarProps) {
 
         {/* Desktop Menu */}
         <div className="hidden gap-8 text-eyebrow uppercase tracking-meta text-neutral-dark md:flex">
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <Link
               key={link.name}
               href={link.href}
@@ -102,7 +95,7 @@ export default function NavBar({ proyectos }: NavBarProps) {
             className="fixed inset-0 z-40 bg-[color:var(--color-paper)]/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-12"
           >
             <div className="flex flex-col items-center gap-8 text-body font-medium uppercase tracking-meta text-neutral-dark">
-              {navLinks.map((link, i) => (
+              {NAV_LINKS.map((link, i) => (
                 <motion.div
                   key={link.name}
                   initial={{ opacity: 0, y: 20 }}
