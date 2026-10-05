@@ -6,7 +6,7 @@ import type { CollectionConfig } from "payload";
  * No `alt` field lives here on purpose. Alt text for these images is
  * contextual — the same photograph describes itself differently in a gallery
  * card than it does inside a project narrative — so each consumer supplies
- * its own. See the `alt` field on the `imagenes` rows in Proyectos.
+ * its own. See the `alt` field on the `imagenes` rows in Obras.
  */
 export const Media: CollectionConfig = {
   slug: "media",

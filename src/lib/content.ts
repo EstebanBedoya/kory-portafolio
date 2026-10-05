@@ -1,15 +1,12 @@
 import "server-only";
 
 import config from "@payload-config";
-import { getPayload } from "payload";
+import { getPayload, type Where } from "payload";
 
-import type { Media, Obra as ObraDoc, Proyecto as ProyectoDoc } from "@/payload-types";
+import type { Media, Obra as ObraDoc } from "@/payload-types";
 import type {
-  NavProyecto,
   Obra,
-  Proyecto,
-  ProyectoImagen,
-  ProyectoParrafo,
+  ObraImagen,
   TextosSitio,
 } from "@/types/content";
 
@@ -44,60 +41,42 @@ function mediaUrl(value: number | Media | null | undefined): string | null {
 }
 
 function toObra(doc: ObraDoc): Obra | null {
-  const imagen = mediaUrl(doc.imagen);
-  if (!imagen) {
-    console.warn(`[content] obra "${doc.slug}" has no resolvable image; skipping.`);
-    return null;
-  }
-
-  return {
-    id: doc.slug,
-    titulo: doc.titulo,
-    anio: doc.anio,
-    tecnica: doc.tecnica,
-    tamano: doc.tamano,
-    imagen,
-  };
-}
-
-function toProyecto(doc: ProyectoDoc): Proyecto | null {
-  const imagenes: ProyectoImagen[] = (doc.imagenes ?? []).flatMap((row) => {
+  const imagenes: ObraImagen[] = (doc.imagenes ?? []).flatMap((row) => {
     const src = mediaUrl(row.imagen);
     if (!src) {
       console.warn(
-        `[content] proyecto "${doc.slug}" has an image row with no resolvable file; skipping the row.`,
+        `[content] obra "${doc.slug}" has a photo row with no resolvable file; skipping the row.`,
       );
       return [];
     }
-    return [{ src, alt: row.alt, wide: Boolean(row.wide) }];
+    return [{ src, alt: row.alt || doc.titulo }];
   });
 
   if (imagenes.length === 0) {
-    console.warn(`[content] proyecto "${doc.slug}" has no usable images; skipping.`);
+    console.warn(`[content] obra "${doc.slug}" has no usable photos; skipping.`);
     return null;
   }
-
-  const introduccion: ProyectoParrafo[] = (doc.introduccion ?? []).map((bloque) => ({
-    tipo: bloque.tipo,
-    texto: bloque.texto,
-  }));
 
   return {
     id: doc.slug,
     titulo: doc.titulo,
+    galeria: doc.galeria,
     anio: doc.anio,
-    autor: doc.autor,
-    dimensiones: doc.dimensiones,
     tecnica: doc.tecnica,
-    introduccion,
+    tamano: doc.tamano,
+    descripcion: doc.descripcion ?? undefined,
     imagenes,
   };
 }
 
-export async function getObras(): Promise<Obra[]> {
+async function findObras(where: Where): Promise<Obra[]> {
   const payload = await client();
   const { docs } = await payload.find({
     collection: "obras",
+    where,
+    // Server-side reads of the hidden gallery go through here; the public API
+    // access rule would filter them out.
+    overrideAccess: true,
     // The artist's drag-and-drop ordering in the admin.
     sort: "_order",
     limit: 200,
@@ -107,18 +86,14 @@ export async function getObras(): Promise<Obra[]> {
   return docs.map(toObra).filter((obra): obra is Obra => obra !== null);
 }
 
-export async function getProyectos(): Promise<Proyecto[]> {
-  const payload = await client();
-  const { docs } = await payload.find({
-    collection: "proyectos",
-    sort: "_order",
-    limit: 100,
-    depth: 2,
-  });
+/** Every public work. The hidden gallery is never part of the static page. */
+export function getObras(): Promise<Obra[]> {
+  return findObras({ galeria: { not_equals: "oculta" } });
+}
 
-  return docs
-    .map(toProyecto)
-    .filter((proyecto): proyecto is Proyecto => proyecto !== null);
+/** Only call this after the visitor has passed the password check. */
+export function getObrasOcultas(): Promise<Obra[]> {
+  return findObras({ galeria: { equals: "oculta" } });
 }
 
 /**
@@ -163,21 +138,4 @@ export async function getTextos(): Promise<TextosSitio> {
       descripcion: doc.metaDescripcion,
     },
   };
-}
-
-/**
- * The nav only needs a title and an anchor, so this skips the depth-2
- * population that resolving every project's images would cost.
- */
-export async function getNavProyectos(): Promise<NavProyecto[]> {
-  const payload = await client();
-  const { docs } = await payload.find({
-    collection: "proyectos",
-    sort: "_order",
-    limit: 100,
-    depth: 0,
-    select: { slug: true, titulo: true },
-  });
-
-  return docs.map((doc) => ({ id: doc.slug, titulo: doc.titulo }));
 }

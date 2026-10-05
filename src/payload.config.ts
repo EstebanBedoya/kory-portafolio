@@ -9,7 +9,6 @@ import sharp from "sharp";
 
 import { Media } from "@/collections/Media";
 import { Obras } from "@/collections/Obras";
-import { Proyectos } from "@/collections/Proyectos";
 import { Users } from "@/collections/Users";
 import { Textos } from "@/globals/Textos";
 import { requireEnv } from "@/lib/env";
@@ -67,7 +66,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Obras, Proyectos, Media, Users],
+  collections: [Obras, Media, Users],
   globals: [Textos],
   editor: lexicalEditor(),
   secret: requireEnv("PAYLOAD_SECRET"),

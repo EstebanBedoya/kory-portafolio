@@ -68,7 +68,6 @@ export interface Config {
   blocks: {};
   collections: {
     obras: Obra;
-    proyectos: Proyecto;
     media: Media;
     users: User;
     'payload-kv': PayloadKv;
@@ -79,7 +78,6 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     obras: ObrasSelect<false> | ObrasSelect<true>;
-    proyectos: ProyectosSelect<false> | ProyectosSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -137,10 +135,25 @@ export interface Obra {
    * Identificador estable de la obra. Se genera desde el título y no conviene cambiarlo.
    */
   slug: string;
+  galeria: 'pincel-y-bocado' | 'galeria-2' | 'galeria-3' | 'oculta';
   anio: number;
   tecnica: string;
   tamano: string;
-  imagen: number | Media;
+  /**
+   * Opcional. Texto sobre la obra; se muestra al abrirla. Una línea en blanco separa párrafos.
+   */
+  descripcion?: string | null;
+  /**
+   * Una obra puede tener varias fotos (detalles, otros ángulos). La primera es la portada en la galería.
+   */
+  imagenes: {
+    imagen: number | Media;
+    /**
+     * Opcional. Qué se ve en esta foto; si se deja vacío se usa el título de la obra.
+     */
+    alt?: string | null;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -179,51 +192,6 @@ export interface Media {
       filename?: string | null;
     };
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "proyectos".
- */
-export interface Proyecto {
-  id: number;
-  _order?: string | null;
-  titulo: string;
-  /**
-   * Se usa como ancla de navegación (#slug). Cambiarlo rompe los enlaces del menú y los enlaces externos.
-   */
-  slug: string;
-  anio: number;
-  autor: string;
-  dimensiones: string;
-  tecnica: string;
-  /**
-   * El texto del proyecto, bloque por bloque. El orden de las filas es el orden en que se leen.
-   */
-  introduccion: {
-    /**
-     * «Destacado» se compone en serif y con filete lateral; reservalo para una idea por proyecto.
-     */
-    tipo: 'parrafo' | 'destacado';
-    texto: string;
-    id?: string | null;
-  }[];
-  /**
-   * El orden de las filas es el orden de la cuadrícula.
-   */
-  imagenes: {
-    imagen: number | Media;
-    /**
-     * Qué se ve en la foto, para quien no puede verla. Describe la imagen en este proyecto, no la obra en general.
-     */
-    alt: string;
-    /**
-     * Las tomas horizontales ocupan todo el ancho de la cuadrícula para que no se recorten.
-     */
-    wide?: boolean | null;
-    id?: string | null;
-  }[];
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -278,10 +246,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'obras';
         value: number | Obra;
-      } | null)
-    | ({
-        relationTo: 'proyectos';
-        value: number | Proyecto;
       } | null)
     | ({
         relationTo: 'media';
@@ -341,38 +305,16 @@ export interface ObrasSelect<T extends boolean = true> {
   _order?: T;
   titulo?: T;
   slug?: T;
+  galeria?: T;
   anio?: T;
   tecnica?: T;
   tamano?: T;
-  imagen?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "proyectos_select".
- */
-export interface ProyectosSelect<T extends boolean = true> {
-  _order?: T;
-  titulo?: T;
-  slug?: T;
-  anio?: T;
-  autor?: T;
-  dimensiones?: T;
-  tecnica?: T;
-  introduccion?:
-    | T
-    | {
-        tipo?: T;
-        texto?: T;
-        id?: T;
-      };
+  descripcion?: T;
   imagenes?:
     | T
     | {
         imagen?: T;
         alt?: T;
-        wide?: T;
         id?: T;
       };
   updatedAt?: T;

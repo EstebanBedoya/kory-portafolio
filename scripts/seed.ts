@@ -114,19 +114,20 @@ async function main() {
       data: {
         slug: obra.id,
         titulo: obra.titulo,
+        galeria: "pincel-y-bocado",
         anio: obra.anio,
         tecnica: obra.tecnica,
         tamano: obra.tamano,
-        imagen: media.id,
+        imagenes: [{ imagen: media.id }],
       },
       context: seedContext(),
     });
     console.log(`✓ obra ${obra.id}`);
   }
 
-  // --- Proyectos -----------------------------------------------------------
+  // --- Proyectos (now a work in Pincel y Bocado) ---------------------------
   for (const proyecto of proyectos) {
-    const imagenes: { imagen: number; alt: string; wide: boolean }[] = [];
+    const imagenes: { imagen: number; alt: string }[] = [];
 
     for (const imagen of proyecto.imagenes) {
       const media = await payload.create({
@@ -135,41 +136,33 @@ async function main() {
         data: {},
         context: seedContext(),
       });
-      imagenes.push({
-        imagen: media.id,
-        alt: imagen.alt,
-        wide: Boolean(imagen.wide),
-      });
+      imagenes.push({ imagen: media.id, alt: imagen.alt });
     }
 
     await payload.create({
-      collection: "proyectos",
+      collection: "obras",
       data: {
         slug: proyecto.id,
         titulo: proyecto.titulo,
+        galeria: "pincel-y-bocado",
         anio: proyecto.anio,
-        autor: proyecto.autor,
-        dimensiones: proyecto.dimensiones,
         tecnica: proyecto.tecnica,
-        introduccion: proyecto.introduccion.map((bloque) => ({
-          tipo: bloque.tipo,
-          texto: bloque.texto,
-        })),
+        tamano: proyecto.dimensiones,
+        descripcion: proyecto.introduccion.map((b) => b.texto).join("\n\n"),
         imagenes,
       },
       context: seedContext(),
     });
-    console.log(`✓ proyecto ${proyecto.id} (${imagenes.length} imágenes)`);
+    console.log(`✓ obra ${proyecto.id} (${imagenes.length} imágenes)`);
   }
 
-  const [finalObras, finalProyectos, finalMedia] = await Promise.all([
+  const [finalObras, finalMedia] = await Promise.all([
     payload.count({ collection: "obras" }),
-    payload.count({ collection: "proyectos" }),
     payload.count({ collection: "media" }),
   ]);
 
   console.log(
-    `\nDone — ${finalObras.totalDocs} obras, ${finalProyectos.totalDocs} proyectos, ${finalMedia.totalDocs} media.`,
+    `\nDone — ${finalObras.totalDocs} obras, ${finalMedia.totalDocs} media.`,
   );
 }
 

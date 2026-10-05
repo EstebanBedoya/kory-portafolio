@@ -7,42 +7,26 @@
  * mapping happens once, in src/lib/content.ts.
  */
 
+export type GaleriaId = "pincel-y-bocado" | "galeria-2" | "galeria-3" | "oculta";
+
+export interface ObraImagen {
+  src: string;
+  alt: string;
+}
+
 export interface Obra {
   /** The artwork's slug. Stable, and what `key` and lightbox cycling use. */
   id: string;
   titulo: string;
+  galeria: GaleriaId;
   anio: number;
   tecnica: string;
   tamano: string;
-  imagen: string;
+  /** Optional prose about the work; paragraphs split on blank lines. */
+  descripcion?: string;
+  /** At least one. The first is the cover in the gallery grid. */
+  imagenes: ObraImagen[];
 }
-
-export interface ProyectoParrafo {
-  tipo: "parrafo" | "destacado";
-  texto: string;
-}
-
-export interface ProyectoImagen {
-  src: string;
-  alt: string;
-  /** Landscape shots span the full grid width so they are never cropped. */
-  wide?: boolean;
-}
-
-export interface Proyecto {
-  /** The project's slug. Also the section's anchor target, e.g. `#slug`. */
-  id: string;
-  titulo: string;
-  anio: number;
-  autor: string;
-  dimensiones: string;
-  tecnica: string;
-  introduccion: ProyectoParrafo[];
-  imagenes: ProyectoImagen[];
-}
-
-/** What the nav needs to build its links — nothing more. */
-export type NavProyecto = Pick<Proyecto, "id" | "titulo">;
 
 /**
  * Every piece of copy on the site that is not an artwork or a project.
