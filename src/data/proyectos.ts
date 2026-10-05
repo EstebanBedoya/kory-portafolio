@@ -48,6 +48,10 @@ export const proyectos: Proyecto[] = [
     ],
     imagenes: [
       {
+        src: "/images/proyectos/entre-migas-y-recuerdos/04-mesa-ofrenda.jpeg",
+        alt: "Vista cenital de la mesa: platos con buñuelos y empanadas, un bombillo encendido y las tarjetas ilustradas que se reparten a los asistentes.",
+      },
+      {
         src: "/images/proyectos/entre-migas-y-recuerdos/01-vista-general.jpeg",
         alt: "Vista general de la instalación: una mesa vestida de negro frente a una pared con retratos instantáneos de los participantes, flanqueada por dos óleos pastel enmarcados.",
         wide: true,
@@ -59,10 +63,6 @@ export const proyectos: Proyecto[] = [
       {
         src: "/images/proyectos/entre-migas-y-recuerdos/03-bunuelo-oleo-pastel.jpeg",
         alt: "Óleo pastel de un buñuelo sobre papel, enmarcado en negro.",
-      },
-      {
-        src: "/images/proyectos/entre-migas-y-recuerdos/04-mesa-ofrenda.jpeg",
-        alt: "Vista cenital de la mesa: platos con buñuelos y empanadas, un bombillo encendido y las tarjetas ilustradas que se reparten a los asistentes.",
       },
       {
         src: "/images/proyectos/entre-migas-y-recuerdos/05-escritura-de-recuerdos.jpeg",
