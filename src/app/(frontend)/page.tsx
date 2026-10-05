@@ -2,7 +2,6 @@ import HeroCelestial from "@/components/sections/HeroCelestial";
 import AboutCelestial from "@/components/sections/AboutCelestial";
 import Galerias from "@/components/sections/Galerias";
 import Popup from "@/components/sections/Popup";
-import MasSecciones from "@/components/sections/MasSecciones";
 import ContactoCelestial from "@/components/sections/ContactoCelestial";
 import { getObras, getTextos } from "@/lib/content";
 
@@ -25,7 +24,6 @@ export default async function HomePage() {
       <Galerias obras={obras} textos={textos.galeria} />
       <Popup />
       <AboutCelestial textos={textos.acerca} />
-      <MasSecciones />
       <ContactoCelestial textos={textos.contacto} />
     </main>
   );

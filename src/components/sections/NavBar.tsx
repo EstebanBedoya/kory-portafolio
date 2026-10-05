@@ -3,19 +3,17 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { MENU, NAV_PRINCIPAL } from "@/lib/menu";
 
-/** The four entries of the public menu; everything else sits at the foot of the page. */
-const NAV_LINKS = [
-  { name: "Galerías", href: "#galerias" },
-  { name: "Popup", href: "#popup" },
-  { name: "Bio + CV", href: "#about" },
-  { name: "Contacto", href: "#contact" },
-];
+const LINK_FOCUS =
+  "rounded-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +22,20 @@ export default function NavBar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
+
+  // Home sections are anchors; from any other page they go through the home.
+  const resolve = (href: string) =>
+    href.startsWith("#") && pathname !== "/" ? `/${href}` : href;
+  const isActive = (href: string) => href === pathname;
 
   return (
     <>
@@ -35,7 +47,11 @@ export default function NavBar() {
           scrolled || isOpen ? "bg-[color:var(--color-paper)]/10 backdrop-blur-md shadow-sm" : "bg-transparent"
         }`}
       >
-        <Link href="/" className="relative z-50 rounded-sm mix-blend-multiply focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+        <Link
+          href="/"
+          onClick={() => setIsOpen(false)}
+          className="relative z-50 rounded-sm mix-blend-multiply focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+        >
           <Image
             src="/logo-name.png"
             alt="Kory"
@@ -45,73 +61,102 @@ export default function NavBar() {
           />
         </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden gap-8 text-eyebrow uppercase tracking-meta text-neutral-dark md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="rounded-sm transition-colors duration-300 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
-
-        {/* Mobile Toggle Button */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="relative z-50 rounded-sm p-3 text-neutral-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent md:hidden"
-          aria-label="Toggle Menu"
-          aria-expanded={isOpen}
-          aria-controls="mobile-menu"
-        >
-          <div className="w-6 h-5 relative flex flex-col justify-between">
-            <motion.span
-              animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
-              className="w-full h-0.5 bg-neutral-dark block rounded-full"
-            />
-            <motion.span
-              animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
-              className="w-full h-0.5 bg-neutral-dark block rounded-full"
-            />
-            <motion.span
-              animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
-              className="w-full h-0.5 bg-neutral-dark block rounded-full"
-            />
+        <div className="relative z-50 flex items-center gap-8">
+          {/* Main pages */}
+          <div className="hidden gap-8 text-eyebrow uppercase tracking-meta text-neutral-dark md:flex">
+            {NAV_PRINCIPAL.map((link) => (
+              <Link
+                key={link.name}
+                href={resolve(link.href)}
+                aria-current={isActive(link.href) ? "page" : undefined}
+                className={`${LINK_FOCUS} hover:text-brand aria-[current=page]:text-brand`}
+              >
+                {link.name}
+              </Link>
+            ))}
           </div>
-        </button>
+
+          {/* Hamburger: the whole site map */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="rounded-sm p-3 text-neutral-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            aria-label="Menú"
+            aria-expanded={isOpen}
+            aria-controls="site-menu"
+          >
+            <div className="w-6 h-5 relative flex flex-col justify-between">
+              <motion.span
+                animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+                className="w-full h-0.5 bg-neutral-dark block rounded-full"
+              />
+              <motion.span
+                animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+                className="w-full h-0.5 bg-neutral-dark block rounded-full"
+              />
+              <motion.span
+                animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+                className="w-full h-0.5 bg-neutral-dark block rounded-full"
+              />
+            </div>
+          </button>
+        </div>
       </motion.nav>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            id="mobile-menu"
+            id="site-menu"
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-40 bg-[color:var(--color-paper)]/95 backdrop-blur-xl md:hidden flex flex-col items-center justify-center gap-12"
+            className="fixed inset-0 z-40 overflow-y-auto bg-[color:var(--color-paper)]/95 backdrop-blur-xl"
           >
-            <div className="flex flex-col items-center gap-8 text-body font-medium uppercase tracking-meta text-neutral-dark">
-              {NAV_LINKS.map((link, i) => (
-                <motion.div
-                  key={link.name}
+            <ul className="mx-auto flex min-h-full max-w-reading flex-col justify-center gap-6 px-6 pb-12 pt-28 md:px-12">
+              {MENU.map((item, i) => (
+                <motion.li
+                  key={item.name}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + i * 0.1 }}
+                  transition={{ delay: 0.05 + i * 0.05 }}
                 >
                   <Link
-                    href={link.href}
+                    href={resolve(item.href)}
                     onClick={() => setIsOpen(false)}
-                    className="rounded-sm transition-colors duration-300 hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
+                    aria-current={isActive(item.href) ? "page" : undefined}
+                    className={`${LINK_FOCUS} font-serif text-title ${
+                      item.locked
+                        ? "text-red-700 hover:text-red-900"
+                        : "text-neutral-dark hover:text-brand aria-[current=page]:text-brand"
+                    }`}
                   >
-                    {link.name}
+                    {item.name}
+                    {item.locked && (
+                      <span aria-hidden="true" className="ml-3 text-body">
+                        🔒
+                      </span>
+                    )}
                   </Link>
-                </motion.div>
+
+                  {item.children && (
+                    <ul className="mt-3 flex flex-col gap-2 border-l border-brand/20 pl-5">
+                      {item.children.map((child) => (
+                        <li key={child.href}>
+                          <Link
+                            href={resolve(child.href)}
+                            onClick={() => setIsOpen(false)}
+                            aria-current={isActive(child.href) ? "page" : undefined}
+                            className={`${LINK_FOCUS} text-eyebrow uppercase tracking-meta text-neutral-dark hover:text-brand aria-[current=page]:text-brand`}
+                          >
+                            {child.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </motion.li>
               ))}
-            </div>
+            </ul>
           </motion.div>
         )}
       </AnimatePresence>

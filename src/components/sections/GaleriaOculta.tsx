@@ -24,7 +24,7 @@ export default function GaleriaOculta() {
     setError(null);
 
     try {
-      const respuesta = await fetch("/galeria-oculta", {
+      const respuesta = await fetch("/api/galeria-oculta", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),
@@ -49,7 +49,7 @@ export default function GaleriaOculta() {
 
   return (
     <section id="galeria-oculta" className="py-16">
-      <h2 className="font-serif text-title text-red-700">Galería oculta</h2>
+      <h1 className="font-serif text-title text-red-700">Galería oculta</h1>
 
       {estado === "abierta" ? (
         <div className="mt-12 text-red-700">
