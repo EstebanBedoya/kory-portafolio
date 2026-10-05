@@ -2,7 +2,7 @@
 #
 # Mirrors what production provides — a Postgres database and S3-compatible
 # object storage — so the upload path exercised locally is the same one that
-# runs on Vercel. MinIO is used here rather than a filesystem adapter
+# runs on Vercel. RustFS is used here rather than a filesystem adapter
 # precisely so that presigned browser uploads are tested for real.
 #
 #   docker compose -f docker-compose.dev.yml up -d
@@ -30,25 +30,23 @@ services:
       timeout: 5s
       retries: 10
 
-  minio:
-    image: minio/minio:latest
-    container_name: kory-minio-dev
+  # RustFS: S3-compatible store (MinIO stopped publishing images).
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: kory-rustfs-dev
     restart: unless-stopped
-    command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: koryminio
-      MINIO_ROOT_PASSWORD: koryminio123
+      RUSTFS_ACCESS_KEY: koryminio
+      RUSTFS_SECRET_KEY: koryminio123
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ADDRESS: ":9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
-      - kory-minio-data:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      - kory-rustfs-data:/data
 
 volumes:
   kory-postgres-data:
-  kory-minio-data:
+  kory-rustfs-data:
