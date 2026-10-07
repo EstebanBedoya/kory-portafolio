@@ -1,0 +1,113 @@
+# Dokploy Domains: app -> 3000, rustfs S3 API -> 9000 (HTTPS).
+# No host ports: Postgres and the storage console are never published.
+x-app-environment: &app-environment
+  NODE_ENV: production
+  DEPLOYMENT_TARGET: dokploy
+  DATABASE_URI: postgres://${POSTGRES_USER:?required}:${POSTGRES_PASSWORD:?required}@postgres:5432/${POSTGRES_DB:?required}
+  PAYLOAD_SECRET: ${PAYLOAD_SECRET:?required}
+  NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?required}
+  GALERIA_OCULTA_PASSWORD: ${GALERIA_OCULTA_PASSWORD:?required}
+  S3_BUCKET: ${S3_BUCKET:?required}
+  S3_REGION: us-east-1
+  S3_ENDPOINT: ${S3_ENDPOINT:?required}
+  S3_PUBLIC_URL: ${S3_PUBLIC_URL:?required}
+  S3_FORCE_PATH_STYLE: "true"
+  S3_ACCESS_KEY_ID: ${RUSTFS_ACCESS_KEY:?required}
+  S3_SECRET_ACCESS_KEY: ${RUSTFS_SECRET_KEY:?required}
+
+services:
+  postgres:
+    image: postgres:17.11-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?required}
+      POSTGRES_DB: ${POSTGRES_DB:?required}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks: [backend]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  rustfs:
+    image: rustfs/rustfs:1.0.1
+    restart: unless-stopped
+    environment:
+      RUSTFS_ACCESS_KEY: ${RUSTFS_ACCESS_KEY:?required}
+      RUSTFS_SECRET_KEY: ${RUSTFS_SECRET_KEY:?required}
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ENABLE: "false"
+      RUSTFS_CORS_ALLOWED_ORIGINS: ${NEXT_PUBLIC_SERVER_URL:?required}
+    volumes:
+      - rustfs-data:/data
+    networks: [backend, proxy]
+    healthcheck:
+      test: [CMD, curl, -f, http://localhost:9000/health/ready]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+
+  storage-init:
+    build:
+      context: .
+      target: tools
+    restart: "no"
+    environment:
+      <<: *app-environment
+      S3_ENDPOINT: http://rustfs:9000
+    command: [node, scripts/init-dokploy-storage.mjs]
+    networks: [backend]
+    depends_on:
+      rustfs:
+        condition: service_healthy
+
+  migrate:
+    build:
+      context: .
+      target: tools
+    restart: "no"
+    environment:
+      <<: *app-environment
+      INITIAL_ADMIN_EMAIL: ${INITIAL_ADMIN_EMAIL:-}
+      INITIAL_ADMIN_PASSWORD: ${INITIAL_ADMIN_PASSWORD:-}
+    command: [sh, -c, "npm run payload migrate && ./node_modules/.bin/tsx scripts/init-dokploy-admin.ts"]
+    networks: [backend]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  app:
+    build:
+      context: .
+      target: app
+      args:
+        S3_PUBLIC_URL: ${S3_PUBLIC_URL:?required}
+    restart: unless-stopped
+    environment: *app-environment
+    expose: ["3000"]
+    networks: [backend, proxy]
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      storage-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  postgres-data:
+  rustfs-data:
+
+networks:
+  backend:
+  proxy:
+    external: true
+    name: dokploy-network

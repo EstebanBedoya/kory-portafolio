@@ -43,6 +43,7 @@ const assetHostIsLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(
 );
 
 const nextConfig: NextConfig = {
+  ...(process.env.DEPLOYMENT_TARGET === "dokploy" ? { output: "standalone" } : {}),
   images: {
     remotePatterns: [mediaPattern],
     ...(assetHostIsLocal ? { dangerouslyAllowLocalIP: true } : {}),

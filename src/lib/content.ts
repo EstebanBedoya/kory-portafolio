@@ -2,6 +2,7 @@ import "server-only";
 
 import config from "@payload-config";
 import { getPayload, type Where } from "payload";
+import { connection } from "next/server";
 
 import type { Media, Obra as ObraDoc } from "@/payload-types";
 import type {
@@ -21,6 +22,9 @@ import type {
  */
 
 async function client() {
+  // Compose builds before its database exists. Only this deployment renders
+  // CMS-backed pages on request; the existing Vercel ISR path stays intact.
+  if (process.env.DEPLOYMENT_TARGET === "dokploy") await connection();
   return getPayload({ config });
 }
 
@@ -117,7 +121,7 @@ export async function getTextos(): Promise<TextosSitio> {
     },
     acerca: {
       eyebrow: doc.acercaEyebrow,
-      parrafos: doc.acercaDeclaracion.split(/\n\s*\n/)
+      parrafos: (doc.acercaDeclaracion ?? "").split(/\n\s*\n/)
         .map((parrafo) => parrafo.trim())
         .filter(Boolean),
       lugar: doc.acercaLugar,
@@ -130,7 +134,7 @@ export async function getTextos(): Promise<TextosSitio> {
     contacto: {
       eyebrow: doc.contactoEyebrow,
       email: doc.contactoEmail,
-      instagram: doc.contactoInstagram.replace(/^@/, ""),
+      instagram: (doc.contactoInstagram ?? "").replace(/^@/, ""),
       copyright: doc.contactoCopyright,
     },
     meta: {

@@ -3,6 +3,7 @@ import * as migration_20260907_225339_textos from './20260907_225339_textos';
 import * as migration_20261005_023735_galerias from './20261005_023735_galerias';
 import * as migration_20261005_025227_fotos_por_obra from './20261005_025227_fotos_por_obra';
 import * as migration_20261005_030318_proyectos_a_obras from './20261005_030318_proyectos_a_obras';
+import * as migration_20261007_061031_auth_security from './20261007_061031_auth_security';
 
 export const migrations = [
   {
@@ -29,5 +30,10 @@ export const migrations = [
     up: migration_20261005_030318_proyectos_a_obras.up,
     down: migration_20261005_030318_proyectos_a_obras.down,
     name: '20261005_030318_proyectos_a_obras'
+  },
+  {
+    up: migration_20261007_061031_auth_security.up,
+    down: migration_20261007_061031_auth_security.down,
+    name: '20261007_061031_auth_security',
   },
 ];
