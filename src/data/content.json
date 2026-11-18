@@ -1,0 +1,155 @@
+{
+  "obras": [
+    {
+      "id": "lirios-azules",
+      "titulo": "Lirios azules",
+      "galeria": "galeria-2",
+      "anio": 2026,
+      "tecnica": "Óleo pastel sobre cartón industrial",
+      "tamano": "media carta",
+      "imagenes": [
+        {
+          "src": "/content/lirios-azules.jpg",
+          "alt": "Lirios azules"
+        }
+      ]
+    },
+    {
+      "id": "cascabel",
+      "titulo": "Cascabel",
+      "galeria": "galeria-2",
+      "anio": 2025,
+      "tecnica": "Óleo pastel sobre papel acuarela",
+      "tamano": "carta",
+      "imagenes": [
+        {
+          "src": "/content/cascabel-2400x3042.webp",
+          "alt": "Cascabel"
+        }
+      ]
+    },
+    {
+      "id": "varang",
+      "titulo": "Varang",
+      "galeria": "galeria-3",
+      "anio": 2025,
+      "tecnica": "Óleo pastel sobre papel acuarela",
+      "tamano": "carta",
+      "imagenes": [
+        {
+          "src": "/content/varang.jpg",
+          "alt": "Varang"
+        }
+      ]
+    },
+    {
+      "id": "toronja",
+      "titulo": "Toronja",
+      "galeria": "pincel-y-bocado",
+      "anio": 2025,
+      "tecnica": "Óleo pastel sobre papel acuarela",
+      "tamano": "carta",
+      "imagenes": [
+        {
+          "src": "/content/toronja.jpg",
+          "alt": "Toronja"
+        }
+      ]
+    },
+    {
+      "id": "odio",
+      "titulo": "Odio",
+      "galeria": "galeria-3",
+      "anio": 2026,
+      "tecnica": "Óleo pastel sobre cartón industrial",
+      "tamano": "media carta",
+      "imagenes": [
+        {
+          "src": "/content/odio.jpg",
+          "alt": "Odio"
+        }
+      ]
+    },
+    {
+      "id": "uvas",
+      "titulo": "Uvas",
+      "galeria": "pincel-y-bocado",
+      "anio": 2025,
+      "tecnica": "Óleo pastel sobre papel acuarela",
+      "tamano": "media carta",
+      "imagenes": [
+        {
+          "src": "/content/uvas.jpg",
+          "alt": "Uvas"
+        }
+      ]
+    },
+    {
+      "id": "entre-migas-y-recuerdos",
+      "titulo": "Entre migas y recuerdos",
+      "galeria": "pincel-y-bocado",
+      "anio": 2026,
+      "tecnica": "Registro fotográfico, instalación y óleo pastel",
+      "tamano": "varias",
+      "descripcion": "Este proyecto nace de la observación de esos momentos aparentemente pequeños que suceden alrededor de la comida.\n\n¿Por qué ciertos alimentos permanecen en la memoria emocional de las personas?\n\nLa respuesta comenzó a revelarse en conversaciones espontáneas, recuerdos familiares y reacciones inmediatas frente a comidas tradicionales como la empanada o el buñuelo. Las personas no elegían únicamente desde el gusto; elegían desde la experiencia. Cada decisión estaba acompañada por historias, preferencias heredadas, recuerdos de infancia o momentos compartidos con otros.",
+      "imagenes": [
+        {
+          "src": "/content/04-mesa-ofrenda-1.jpeg",
+          "alt": "Vista cenital de la mesa: platos con buñuelos y empanadas, un bombillo encendido y las tarjetas ilustradas que se reparten a los asistentes."
+        },
+        {
+          "src": "/content/01-vista-general.jpeg",
+          "alt": "Vista general de la instalación: una mesa vestida de negro frente a una pared con retratos instantáneos de los participantes, flanqueada por dos óleos pastel enmarcados."
+        },
+        {
+          "src": "/content/02-empanada-oleo-pastel.jpeg",
+          "alt": "Óleo pastel de una empanada sobre papel, enmarcado en negro."
+        },
+        {
+          "src": "/content/03-bunuelo-oleo-pastel.jpeg",
+          "alt": "Óleo pastel de un buñuelo sobre papel, enmarcado en negro."
+        },
+        {
+          "src": "/content/05-escritura-de-recuerdos.jpeg",
+          "alt": "Unas manos escriben un recuerdo en una de las tarjetas mientras el resto del público rodea la mesa."
+        },
+        {
+          "src": "/content/06-publico-en-la-mesa.jpeg",
+          "alt": "El público reunido alrededor de la mesa, escogiendo tarjetas y compartiendo comida durante la activación de la obra."
+        }
+      ]
+    }
+  ],
+  "textos": {
+    "hero": {
+      "titulo": "El arte de",
+      "tituloDestacado": "recordar",
+      "bajada": "Donde la memoria se vuelve materia",
+      "firma": "Estefanía Bedoya Giraldo"
+    },
+    "acerca": {
+      "eyebrow": "Acerca de mí",
+      "parrafos": [
+        "Mi obra está atravesada por los archivos de la memoria, la nostalgia y el acto de recordar como construcción de identidad. Me interesa cómo el recuerdo moldea lo que somos y cómo el olvido puede convertirse en una forma de pérdida.",
+        "Desde lo plástico, trabajo con elementos como los alimentos y las frutas, que me permiten investigar la materialidad, el color y su carga simbólica. Visualmente, mi estética se mueve entre lo gótico y lo matérico, combinando sensibilidad y oscuridad.",
+        "Busco generar contemplación: que el espectador no solo observe la obra, sino que sienta que es observado por ella."
+      ],
+      "lugar": "Medellín, Colombia",
+      "anio": "2003"
+    },
+    "galeria": {
+      "eyebrow": "Portafolio",
+      "titulo": "Galería Celestial"
+    },
+    "contacto": {
+      "eyebrow": "Contacto",
+      "email": "estefabegi@gmail.com",
+      "instagram": "its_koryn",
+      "copyright": "Estefanía Bedoya Giraldo © 2026"
+    },
+    "meta": {
+      "titulo": "KORY",
+      "descripcion": "Portafolio artístico celestial. El arte de recordar donde la memoria se vuelve materia."
+    }
+  }
+}

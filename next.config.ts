@@ -13,6 +13,8 @@ import type { NextConfig } from "next";
  */
 function mediaRemotePattern() {
   const publicUrl = process.env.S3_PUBLIC_URL;
+  // Static snapshot mode serves images from /public; nothing remote to allow.
+  if (!publicUrl && !process.env.DATABASE_URI) return null;
   if (!publicUrl) {
     throw new Error(
       "Missing required environment variable S3_PUBLIC_URL — next/image cannot be configured without it. See .env.example.",
@@ -38,14 +40,14 @@ const mediaPattern = mediaRemotePattern();
  * be relaxed there or every image 400s. Scoped to a local asset host, so it
  * can never be in effect against the production bucket.
  */
-const assetHostIsLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(
-  mediaPattern.hostname,
-);
+const assetHostIsLocal =
+  !!mediaPattern &&
+  /^(localhost|127\.0\.0\.1|\[::1\])$/.test(mediaPattern.hostname);
 
 const nextConfig: NextConfig = {
   ...(process.env.DEPLOYMENT_TARGET === "dokploy" ? { output: "standalone" } : {}),
   images: {
-    remotePatterns: [mediaPattern],
+    remotePatterns: mediaPattern ? [mediaPattern] : [],
     ...(assetHostIsLocal ? { dangerouslyAllowLocalIP: true } : {}),
   },
 };

@@ -1,9 +1,9 @@
 import "server-only";
 
-import config from "@payload-config";
-import { getPayload, type Where } from "payload";
 import { connection } from "next/server";
+import type { Where } from "payload";
 
+import snapshot from "@/data/content.json";
 import type { Media, Obra as ObraDoc } from "@/payload-types";
 import type {
   Obra,
@@ -21,7 +21,18 @@ import type {
  * of every visit.
  */
 
+/**
+ * With no DATABASE_URI the site serves the committed snapshot
+ * (src/data/content.json + public/content), so it runs with nothing but
+ * `npm run dev`. Refresh it with `node scripts/export-static.mjs`.
+ */
+const isStatic = !process.env.DATABASE_URI;
+
 async function client() {
+  const [{ default: config }, { getPayload }] = await Promise.all([
+    import("@payload-config"),
+    import("payload"),
+  ]);
   // Compose builds before its database exists. Only this deployment renders
   // CMS-backed pages on request; the existing Vercel ISR path stays intact.
   if (process.env.DEPLOYMENT_TARGET === "dokploy") await connection();
@@ -91,12 +102,14 @@ async function findObras(where: Where): Promise<Obra[]> {
 }
 
 /** Every public work. The hidden gallery is never part of the static page. */
-export function getObras(): Promise<Obra[]> {
+export async function getObras(): Promise<Obra[]> {
+  if (isStatic) return snapshot.obras as Obra[];
   return findObras({ galeria: { not_equals: "oculta" } });
 }
 
 /** Only call this after the visitor has passed the password check. */
-export function getObrasOcultas(): Promise<Obra[]> {
+export async function getObrasOcultas(): Promise<Obra[]> {
+  if (isStatic) return [];
   return findObras({ galeria: { equals: "oculta" } });
 }
 
@@ -109,6 +122,7 @@ export function getObrasOcultas(): Promise<Obra[]> {
  * an empty paragraph with its own animation.
  */
 export async function getTextos(): Promise<TextosSitio> {
+  if (isStatic) return snapshot.textos;
   const payload = await client();
   const doc = await payload.findGlobal({ slug: "textos", depth: 0 });
 
