@@ -5,12 +5,38 @@
    with working opacity modifiers. Never hand-write those utilities below. */
 @theme {
   /* Colour */
-  --color-canvas: #93CAED;
-  --color-canvas-deep: #7BBCE0;
-  --color-brand: #2D5A82;
-  --color-accent: #1C3F5E;
-  --color-neutral-dark: #121212;
-  --color-paper: #FBFBFB;
+  /* Palette taken from the cover illustration: parchment paper and blue-grey
+     engraving ink. Text colours are tuned to stay readable on the paper. */
+  --color-canvas: #C2B5AA;
+  --color-canvas-deep: #B3A59A;
+  --color-brand: #384A74;
+  --color-accent: #26365A;
+  --color-neutral-dark: #181E2D;
+  --color-paper: #F1EADF;
+
+  /* Slow, light motion: things breathe and drift instead of sitting still. */
+  --animate-breathe: breathe 11s ease-in-out infinite;
+  --animate-drift: drift 16s ease-in-out infinite;
+  --animate-twinkle: twinkle 5s ease-in-out infinite;
+  --animate-pan: pan 34s ease-in-out infinite;
+  /* Phone screens show a third of the cover; slide the stage from the
+     wordmark to the fairy and back. --w is set by PortadaCapas. */
+  @keyframes pan {
+    0%, 100% { translate: calc((var(--w) - 100vw) * 0.5) 0; }
+    50% { translate: calc((var(--w) - 100vw) * -0.5) 0; }
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.035); }
+  }
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -7px, 0); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.35; transform: scale(0.9); }
+    50% { opacity: 0.9; transform: scale(1.1); }
+  }
 
   /* Type families, fed by next/font in layout.tsx */
   --font-serif: var(--font-cormorant), Georgia, serif;
@@ -71,7 +97,9 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.03;
+  /* Printed-paper grain, like the cover illustration. */
+  opacity: 0.07;
+  mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 

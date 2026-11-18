@@ -1,6 +1,8 @@
 import { withPayload } from "@payloadcms/next/withPayload";
 import type { NextConfig } from "next";
 
+import { useStaticContent } from "./src/lib/content-source";
+
 /**
  * Artwork is served from object storage, so `next/image` has to be told which
  * host it may optimise from.
@@ -14,7 +16,7 @@ import type { NextConfig } from "next";
 function mediaRemotePattern() {
   const publicUrl = process.env.S3_PUBLIC_URL;
   // Static snapshot mode serves images from /public; nothing remote to allow.
-  if (!publicUrl && !process.env.DATABASE_URI) return null;
+  if (!publicUrl && useStaticContent) return null;
   if (!publicUrl) {
     throw new Error(
       "Missing required environment variable S3_PUBLIC_URL — next/image cannot be configured without it. See .env.example.",

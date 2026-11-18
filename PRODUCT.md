@@ -28,7 +28,7 @@ The work sits between the gothic and the matérico: oil pastel, pencil, and mixe
 ## Capabilities and Constraints
 
 - No e-commerce: no prices, no purchase flow. Site is non-commercial for now; do not add a shop, pricing, or "buy" CTAs.
-- Contact happens via email and Instagram (@its_koryn), already wired in the Contact section.
+- Contact happens via email and Instagram (@the_koryn), already wired in the Contact section.
 - Gallery content must come from real, confirmed works (see `src/data/obras.ts`); do not invent additional pieces, series, or exhibitions.
 
 ## Brand Commitments

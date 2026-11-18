@@ -53,7 +53,7 @@ export default function NavBar() {
           className="relative z-50 rounded-sm mix-blend-multiply focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
         >
           <Image
-            src="/logo-name.png"
+            src="/logo-name-tinta.png"
             alt="Kory"
             width={120}
             height={40}

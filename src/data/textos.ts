@@ -25,7 +25,7 @@ Busco generar contemplación: que el espectador no solo observe la obra, sino qu
 
   contactoEyebrow: "Contacto",
   contactoEmail: "estefabegi@gmail.com",
-  contactoInstagram: "its_koryn",
+  contactoInstagram: "the_koryn",
   contactoCopyright: "Estefanía Bedoya Giraldo © 2026",
 
   metaTitulo: "KORY",

@@ -8,6 +8,9 @@ interface Particle {
   vx: number;
   vy: number;
   size: number;
+  /** Drawn as a four-point star, like the ones on the cover illustration. */
+  star: boolean;
+  phase: number;
 }
 
 interface ParticlesProps {
@@ -20,8 +23,8 @@ interface ParticlesProps {
 
 export default function ParticlesBackground({
   particleCount = 150,
-  particleColor = "rgba(45, 90, 130, 0.4)",
-  lineColor = "rgba(45, 90, 130, 0.15)",
+  particleColor = "rgba(56, 74, 116, 0.38)",
+  lineColor = "rgba(56, 74, 116, 0.15)",
   maxDistance = 150,
   mouseInteractionRadius = 150,
 }: ParticlesProps) {
@@ -66,9 +69,11 @@ export default function ParticlesBackground({
         particles.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          vx: (Math.random() - 0.5) * 0.8, // subtle movement
-          vy: (Math.random() - 0.5) * 0.8,
+          vx: (Math.random() - 0.5) * 0.5, // slow, floating movement
+          vy: (Math.random() - 0.5) * 0.5,
           size: Math.random() * 3.5 + 1.5,
+          star: Math.random() < 0.22,
+          phase: Math.random() * Math.PI * 2,
         });
       }
     };
@@ -140,7 +145,22 @@ export default function ParticlesBackground({
       ctx.globalAlpha = 1;
       ctx.fillStyle = particleColor;
 
+      const t = performance.now() * 0.0012;
       for (const p of particles) {
+        if (p.star) {
+          // Four-point star that slowly twinkles.
+          const r = p.size * 2.6;
+          ctx.globalAlpha = reduceMotion ? 0.7 : 0.45 + 0.4 * Math.sin(t + p.phase);
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y - r);
+          ctx.quadraticCurveTo(p.x, p.y, p.x + r, p.y);
+          ctx.quadraticCurveTo(p.x, p.y, p.x, p.y + r);
+          ctx.quadraticCurveTo(p.x, p.y, p.x - r, p.y);
+          ctx.quadraticCurveTo(p.x, p.y, p.x, p.y - r);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+          continue;
+        }
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();

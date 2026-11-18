@@ -46,6 +46,7 @@ export default function ObraLightbox({ obra, onClose }: ObraLightboxProps) {
     [total],
   );
 
+
   if (!obra) {
     return <Lightbox item={null} onClose={onClose} />;
   }

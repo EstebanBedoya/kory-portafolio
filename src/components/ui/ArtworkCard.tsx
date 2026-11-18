@@ -45,13 +45,21 @@ export default function ArtworkCard({
         className="group relative block w-full overflow-hidden rounded-2xl border border-[color:var(--color-paper)]/20 bg-[color:var(--color-paper)]/40 shadow-sm backdrop-blur-sm transition-all duration-700 hover:-translate-y-2 hover:shadow-2xl hover:shadow-brand/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
         <div className={`relative w-full ${ASPECT[aspect]}`}>
-          <Image
-            src={src}
-            alt=""
-            fill
-            sizes={sizes}
-            className="object-cover transition-transform duration-700 group-hover:scale-105"
-          />
+          {/* The photo breathes on its own; the hover zoom lives on the
+              inner image so the two transforms do not fight. The delay is
+              derived from the file name so cards are never in step. */}
+          <div
+            className="absolute inset-0 animate-breathe"
+            style={{ animationDelay: `-${src.length % 9}s` }}
+          >
+            <Image
+              src={src}
+              alt=""
+              fill
+              sizes={sizes}
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          </div>
           <div className="absolute inset-0 bg-brand/10 opacity-0 transition-opacity duration-700 group-hover:opacity-100" />
         </div>
         {overlay}

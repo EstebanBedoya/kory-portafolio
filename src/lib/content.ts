@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import type { Where } from "payload";
 
 import snapshot from "@/data/content.json";
+import { useStaticContent } from "@/lib/content-source";
 import type { Media, Obra as ObraDoc } from "@/payload-types";
 import type {
   Obra,
@@ -22,11 +23,12 @@ import type {
  */
 
 /**
- * With no DATABASE_URI the site serves the committed snapshot
- * (src/data/content.json + public/content), so it runs with nothing but
- * `npm run dev`. Refresh it with `node scripts/export-static.mjs`.
+ * In dev the site serves the committed snapshot
+ * (src/data/content.json + public/content) regardless of .env, so it runs
+ * with nothing but `npm run dev`. Refresh it with
+ * `node scripts/export-static.mjs`.
  */
-const isStatic = !process.env.DATABASE_URI;
+const isStatic = useStaticContent;
 
 async function client() {
   const [{ default: config }, { getPayload }] = await Promise.all([
@@ -80,8 +82,7 @@ function toObra(doc: ObraDoc): Obra | null {
     tecnica: doc.tecnica,
     tamano: doc.tamano,
     descripcion: doc.descripcion ?? undefined,
-    imagenes,
-  };
+    imagenes,  };
 }
 
 async function findObras(where: Where): Promise<Obra[]> {
@@ -103,13 +104,13 @@ async function findObras(where: Where): Promise<Obra[]> {
 
 /** Every public work. The hidden gallery is never part of the static page. */
 export async function getObras(): Promise<Obra[]> {
-  if (isStatic) return snapshot.obras as Obra[];
+  if (isStatic) return (snapshot.obras as Obra[]).filter((o) => o.galeria !== "oculta");
   return findObras({ galeria: { not_equals: "oculta" } });
 }
 
 /** Only call this after the visitor has passed the password check. */
 export async function getObrasOcultas(): Promise<Obra[]> {
-  if (isStatic) return [];
+  if (isStatic) return (snapshot.obras as Obra[]).filter((o) => o.galeria === "oculta");
   return findObras({ galeria: { equals: "oculta" } });
 }
 
