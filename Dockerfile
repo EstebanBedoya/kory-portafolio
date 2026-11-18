@@ -8,7 +8,8 @@ RUN npm ci
 # Full dependencies/source are retained only for one-shot operational jobs.
 FROM dependencies AS tools
 COPY . .
-ENV NODE_ENV=production
+# Serve src/data/content.json + public/content; no CMS reads at build or runtime.
+ENV NODE_ENV=production CONTENT_SOURCE=static
 USER node
 
 FROM tools AS builder
@@ -25,7 +26,7 @@ RUN DEPLOYMENT_TARGET=dokploy S3_PUBLIC_URL="${S3_PUBLIC_URL}" \
 
 FROM node:22-bookworm-slim AS app
 WORKDIR /app
-ENV NODE_ENV=production DEPLOYMENT_TARGET=dokploy \
+ENV NODE_ENV=production DEPLOYMENT_TARGET=dokploy CONTENT_SOURCE=static \
     NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3000
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
